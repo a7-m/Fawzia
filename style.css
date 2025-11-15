@@ -427,8 +427,212 @@
             color: #4CAF50;
         }
 
-        .word-count.invalid {
-            color: #f44336;
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .page {
+                padding: 20px;
+            }
+            
+            .header {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .schoolImg {
+                height: 60px;
+                margin-left: -20px !important;
+                margin-right: 20px !important;
+            }
+            
+            .schoolImg:first-child {
+                margin-right: -20px !important;
+                margin-left: 20px !important;
+            }
+            
+            .teacher-name {
+                font-size: 1.5em !important;
+            }
+            
+            .subject-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .subject-card {
+                padding: 20px 15px;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+                max-width: 250px;
+                margin-bottom: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .schoolImg {
+                height: 50px;
+            }
+            
+            .teacher-name {
+                font-size: 1.2em !important;
+            }
+            
+            .page {
+                padding: 15px;
+            }
+            
+            .subject-card {
+                padding: 15px 10px;
+            }
+            
+            .subject-icon {
+                font-size: 2em;
+            }
+            
+            .subject-card h3 {
+                font-size: 1.1em;
+            }
+        }
+        
+        /* Touch and Mobile Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .option:hover,
+            .subject-card:hover,
+            .btn:hover {
+                transform: none;
+            }
+            
+            .option:active,
+            .subject-card:active,
+            .btn:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+        }
+        
+        /* Better mobile form inputs */
+        @media (max-width: 768px) {
+            .form-group input,
+            .form-group select {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 15px;
+            }
+            
+            .option {
+                padding: 18px 20px;
+                font-size: 1.2em;
+                margin: 15px 0;
+            }
+            
+            .question-text {
+                font-size: 1.1em;
+                line-height: 1.8;
+            }
+            
+            .matching-columns {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .results-summary {
+                margin-bottom: 30px;
+            }
+            
+            .score-circle {
+                margin: 0 auto 30px auto;
+                width: 150px;
+                height: 150px;
+            }
+        }
+        
+        /* Landscape mobile optimizations */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .header {
+                margin-bottom: 15px;
+            }
+            
+            .schoolImg {
+                height: 40px !important;
+            }
+            
+            .header h1 {
+                font-size: 1.4em !important;
+            }
+            
+            .teacher-name {
+                font-size: 1.1em !important;
+            }
+            
+            .container {
+                padding: 5px;
+            }
+            
+            .page {
+                padding: 15px;
+            }
+        }
+        
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .schoolImg {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            }
+            
+            .page {
+                background: #1e293b;
+                color: #f1f5f9;
+            }
+            
+            .header h1 {
+                color: #60a5fa;
+            }
+            
+            .option {
+                background: #334155;
+                border-color: #475569;
+                color: #f1f5f9;
+            }
+            
+            .option:hover {
+                background: #475569;
+                border-color: #60a5fa;
+            }
         }
 
         .essay-instructions {
