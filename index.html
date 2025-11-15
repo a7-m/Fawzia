@@ -20,6 +20,8 @@
     </div>
     <div class="form-group"><label>اسم الطالب</label> <input type="text" id="studentName" placeholder="أدخل اسمك الكامل">
     </div>
+    <div class="form-group"><label>البريد الإلكتروني لاستلام النتيجة</label> <input type="email" id="recipientEmail" value="kamel.fawwzia333@gmail.com" disabled>
+    </div>
     <div class="form-group"><label>المادة</label>
      <div class="subject-grid">
       <div class="subject-card selected" data-subject="لغة عربية">
@@ -132,7 +134,7 @@
     <div class="resources">
      <h3>مصادر للمراجعة</h3><a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📄 ملخص الدروس - ملف PDF</a> <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📊 شرح تفصيلي - صفحة كانفا</a> <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">🎥 فيديوهات تعليمية</a> <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📝 تمارين إضافية</a>
     </div>
-    <div class="btn-group"><button class="btn btn-secondary" onclick="window.print()">طباعة النتيجة</button> <button class="btn" id="newTestBtn">اختبار جديد</button>
+    <div class="btn-group"><button class="btn" id="sendResultBtn">إرسال النتيجة</button> <button class="btn btn-secondary" onclick="window.print()">طباعة النتيجة</button> <button class="btn" id="newTestBtn">اختبار جديد</button>
     </div>
    </div>
   </div>

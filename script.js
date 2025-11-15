@@ -164,11 +164,17 @@
             subject: '',
             level: '',
             duration: 0,
+            studentName: '',
+            recipientEmail: '',
             questions: [],
             answers: [],
             currentQuestion: 0,
             startTime: null,
-            timerInterval: null
+            timerInterval: null,
+            scorePercentage: null,
+            correctCount: 0,
+            incorrectCount: 0,
+            timeSpentSeconds: 0
         };
 
         function showPage(pageId) {
@@ -236,7 +242,12 @@
         // تعيين المادة تلقائياً للغة العربية
         currentTest.subject = 'لغة عربية';
 
-        document.getElementById('studentName').addEventListener('input', checkFormComplete);
+        document.getElementById('studentName').addEventListener('input', function() {
+            currentTest.studentName = this.value.trim();
+            checkFormComplete();
+        });
+        const defaultRecipient = 'kamel.fawwzia333@gmail.com';
+        currentTest.recipientEmail = defaultRecipient;
         document.getElementById('levelSelect').addEventListener('change', function() {
             currentTest.level = this.value;
             checkFormComplete();
@@ -247,7 +258,7 @@
         });
 
         function checkFormComplete() {
-            const name = document.getElementById('studentName').value.trim();
+            const name = currentTest.studentName;
             const subject = currentTest.subject;
             const level = currentTest.level;
             const btn = document.getElementById('continueBtn');
@@ -260,6 +271,8 @@
         }
 
         document.getElementById('continueBtn').addEventListener('click', function() {
+            currentTest.studentName = currentTest.studentName || document.getElementById('studentName').value.trim();
+            currentTest.recipientEmail = defaultRecipient;
             document.getElementById('selectedSubject').textContent = currentTest.subject;
             document.getElementById('selectedLevel').textContent = currentTest.level;
             document.getElementById('selectedDuration').textContent = currentTest.duration === 0 ? 'بدون توقيت' : currentTest.duration + ' دقيقة';
@@ -350,7 +363,7 @@
                     overflow-y: auto;
                 `;
                 readingDiv.innerHTML = `
-                    <h3 style="color: #1e3c72; margin-top: 0; margin-bottom: 15px;">إقرأ النص ثم أجب على الأسئلة التي تليه :</h3>
+                    <h3 style="color: #1e3c72; margin-top: 0; margin-bottom: 15px;">اقرأ النص التالي، ثم أجب على الأسئلة التي تليه :</h3>
                     <div style="white-space: pre-line;">${readingPassage}</div>
                 `;
                 
@@ -1027,6 +1040,46 @@
             return matchPercentage >= 40;
         }
 
+        function formatDurationDisplay(seconds) {
+            if (!Number.isFinite(seconds)) {
+                return '0 د 0 ث';
+            }
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes} د ${remainingSeconds} ث`;
+        }
+
+        function formatDurationEmail(seconds) {
+            if (!Number.isFinite(seconds)) {
+                return 'غير محسوب';
+            }
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes} دقيقة ${remainingSeconds} ثانية`;
+        }
+
+        function buildResultSummary() {
+            const lines = [
+                `اسم الطالب: ${currentTest.studentName || 'غير محدد'}`,
+                `المادة: ${currentTest.subject || 'غير محددة'}`,
+                `المستوى: ${currentTest.level || 'غير محدد'}`,
+                `النتيجة: ${typeof currentTest.scorePercentage === 'number' ? currentTest.scorePercentage + '%' : 'غير متوفرة'}`,
+                `عدد الإجابات الصحيحة: ${currentTest.correctCount}`,
+                `عدد الإجابات الخاطئة: ${currentTest.incorrectCount}`,
+                `الوقت المستغرق: ${formatDurationEmail(currentTest.timeSpentSeconds)}`,
+                '',
+                `تاريخ الإنشاء: ${new Date().toLocaleString('ar-EG')}`,
+                '',
+                'تم إنشاء هذه النتيجة بواسطة منصة الاختبارات التعليمية.'
+            ];
+
+            return lines.join('\n');
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
         async function finishTest() {
             if (currentTest.timerInterval) {
                 clearInterval(currentTest.timerInterval);
@@ -1093,13 +1146,15 @@
             const totalQuestions = currentTest.questions.length;
             const score = (correctCount / totalQuestions) * 100;
 
-            document.getElementById('scorePercentage').textContent = `${Math.round(score)}%`;
-            document.getElementById('correctCount').textContent = correctCount;
-            document.getElementById('incorrectCount').textContent = totalQuestions - correctCount;
+            currentTest.scorePercentage = Math.round(score);
+            currentTest.correctCount = correctCount;
+            currentTest.incorrectCount = totalQuestions - correctCount;
+            currentTest.timeSpentSeconds = timeSpent;
 
-            const minutes = Math.floor(timeSpent / 60);
-            const seconds = timeSpent % 60;
-            document.getElementById('timeSpent').textContent = `${minutes} د ${seconds} ث`;
+            document.getElementById('scorePercentage').textContent = `${currentTest.scorePercentage}%`;
+            document.getElementById('correctCount').textContent = currentTest.correctCount;
+            document.getElementById('incorrectCount').textContent = currentTest.incorrectCount;
+            document.getElementById('timeSpent').textContent = formatDurationDisplay(currentTest.timeSpentSeconds);
 
             displayReview();
             showPage('resultsPage');
@@ -1198,15 +1253,22 @@
                 subject: '',
                 level: '',
                 duration: 0,
+                studentName: '',
+                recipientEmail: defaultRecipient,
                 questions: [],
                 answers: [],
                 currentQuestion: 0,
                 startTime: null,
-                timerInterval: null
+                timerInterval: null,
+                scorePercentage: null,
+                correctCount: 0,
+                incorrectCount: 0,
+                timeSpentSeconds: 0
             };
             
             // إعادة تعيين حقول النموذج
             document.getElementById('studentName').value = '';
+            document.getElementById('recipientEmail').value = defaultRecipient;
             document.getElementById('levelSelect').value = '';
             document.getElementById('durationSelect').value = '0';
             document.getElementById('continueBtn').disabled = true;
@@ -1215,6 +1277,20 @@
             currentTest.subject = 'لغة عربية';
             
             showPage('homePage');
+        });
+
+        document.getElementById('sendResultBtn').addEventListener('click', function() {
+            if (typeof currentTest.scorePercentage !== 'number') {
+                alert('يرجى إكمال الاختبار أولاً قبل إرسال النتيجة.');
+                return;
+            }
+
+            const email = defaultRecipient;
+
+            const subject = encodeURIComponent(`نتيجة اختبار ${currentTest.studentName || 'طالب'}`);
+            const body = encodeURIComponent(buildResultSummary());
+
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
         });
 
         // تحميل الإعدادات من data_sdk.js
