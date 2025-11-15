@@ -126,12 +126,12 @@
                     { q: "ما نوع التشبيه في: 'محمد كالأسد في الشجاعة'؟", options: ["مرسل مجمل", "مؤكد مفصل", "مرسل مفصل", "مؤكد مجمل"], correct: 2, type: "multiple_choice" }
                 ],
                 "فهم المقروء": [
-                    { q: "ما هي أول إشارة تبين حدوث شيء غير عادي؟ (ارجع إلى الفقرة 2)", options: ["تحرك كومة الصحف والمجلات", "رؤية أمينة لغلاف المجلة", "باب غرفتها كان مكسوراً", "سماعها لصوت كالهسيس"], correct: 3, type: "multiple_choice", level: "استرجاع" },
+                    { q: "ما هي أول إشارة تبين حدوث شيء غير عادي؟ (ارجع إلى الفقرة 2)", options: ["تحرك كومة الصحف والمجلات", "رؤية أمينة لغلاف المجلة", "باب غرفتها كان مكسوراً", "سماعها لصوت كالهسيس"], correct: 3, type: "multiple_choice", level: "استنتاج" },
                     { q: "من أين جاء التمساح؟ (ارجع إلى الفقرة 3)", options: ["الحمام", "غلاف المجلة", "تحت السرير", "النهر القريب"], correct: 1, type: "multiple_choice", level: "استرجاع" },
                     { q: "أي الكلمات تبين أن أمينة كانت خائفة؟", options: ["تجمدت أمينة في مكانها", "لم تصدق عينيها", "اتسعت عيناها كصحني فنجان", "صوت منخفض كالهسيس"], correct: 0, type: "multiple_choice", level: "تفسير" },
                     { q: "لماذا فكرت أمينة أن التمساح سوف يهجم؟", options: ["أظهر صف أسنانه الطويلة", "أصدر صوتاً كالهسيس", "بدأ يشخر وينخر", "حرك ذيله إلى الأمام والخلف"], correct: 3, type: "multiple_choice", level: "استنتاج" },
                     { q: "رتب هذه الجمل حسب ترتيب حدوثها في القصة", type: "ordering", items: ["رأت أمينة التمساح", "أكل التمساح طيرين من البجع", "حاولت أمينة أن تشرح لوالديها سبب كسر الباب", "بدأت أمينة مشيها إلى الحمام", "ركضت أمينة إلى غرفتها وأغلقت الباب"], correctOrder: ["بدأت أمينة مشيها إلى الحمام", "رأت أمينة التمساح", "ركضت أمينة إلى غرفتها وأغلقت الباب", "أكل التمساح طيرين من البجع", "حاولت أمينة أن تشرح لوالديها سبب كسر الباب"], level: "دمج المعلومات" },
-                    { q: "لماذا نادت أمينة طيور البجع؟ اشرح السبب بالتفصيل", type: "essay", modelAnswer: "نادت أمينة طيور البجع لأنها فكرت أن التمساح جائع ويحتاج إلى طعام ليغادر البيت، وقد قرأت في مجلة الحيوان أن طيور البجع تشبه كعكة عيد الميلاد للتماسيح، فأرادت إطعامه حتى يشبع ويعود إلى مكانه في المجلة", level: "دمج المعلومات" },
+                    { q: "لماذا نادت أمينة طيور البجع؟ اكتب سبب واحدًا", type: "essay", modelAnswer: "(يقبل من الطالب ما يفيد المعنى) نادت أمينة طيور البجع لأنها فكرت أن التمساح جائع ويحتاج إلى طعام ليغادر البيت، وقد قرأت في مجلة الحيوان أن طيور البجع تشبه كعكة عيد الميلاد للتماسيح، فأرادت إطعامه حتى يشبع ويعود إلى مكانه في المجلة", level: "تفسير" },
                     { q: "ما سبب كسر الباب؟ (ارجع إلى الفقرة 7)", options: ["ضرب التمساح الباب بذيله فاخترقه", "ضربته المزهرية الكبيرة", "المنقار الحاد لطائر البجع اصطدم به", "اصطدم به السرير"], correct: 0, type: "multiple_choice", level: "استرجاع" },
                     { q: "كم عمر أمينة في القصة؟ (ارجع إلى الفقرة 1)", options: ["تسع سنوات", "عشر سنوات", "إحدى عشرة سنة", "ثماني سنوات"], correct: 1, type: "multiple_choice", level: "استرجاع" },
                     { q: 'اضغط على هذا الرابط واذكر معلومة واحدة جديدة عن التمساح: <a href="https://ar.wikipedia.org/wiki/%D8%AA%D9%85%D8%B3%D8%A7%D8%AD" target="_blank">إضغط هنا</a>', type: 'essay', modelAnswer: 'تقبل من الطالب جميع الإجابات', level: 'بحث وتطبيق' },
@@ -142,7 +142,7 @@
                     { q: "اختر جميع الأشياء التي فعلتها أمينة للحماية من التمساح", options: ["أغلقت الباب بشدة", "دفعت السرير خلف الباب", "اختبأت تحت السرير", "نادت على والديها", "بنت متراساً", "فتحت النافذة"], correct: [0, 1, 4], type: "multiple_select", level: "دمج المعلومات" },
                     { q: "ماذا لاحظت أمينة في غلاف مجلة الحيوان؟ (ارجع إلى الفقرة 5)", type: "dropdown", options: ["أصبح النهر فارغاً من التمساح", "اختفت المجلة تماماً", "تغير لون الغلاف", "ظهرت حيوانات جديدة"], correct: 0, level: "استرجاع" },
                     { q: "اسحب النقطة إلى عدد طيور البجع التي أكلها التمساح (من 1-10) - ارجع إلى الفقرة 10", type: "click_drag", range: [1, 10], correct: 2, level: "استرجاع" },
-                    { q: "اكتب رأيك: هل تصرفت أمينة بذكاء في حل المشكلة؟ ولماذا؟", type: "essay", modelAnswer: "نعم، تصرفت أمينة بذكاء كبير لأنها فكرت في حل إبداعي للمشكلة بدلاً من الهروب أو طلب المساعدة، واستخدمت معرفتها من مجلة الحيوان لإيجاد طعام مناسب للتمساح، وتمكنت من إعادته إلى مكانه بهدوء وحكمة", level: "تقويم" },
+                    { q: "ما رأيك في تصرف أمينة في حل المشكلة؟ ", type: "essay", modelAnswer: " تصرفت أمينة بذكاء كبير (يقبل من الطالب ما يفيد المعنى)", level: "تقويم" },
                     { q: "ما الذي جعل أمينة تفكر في إطعام التمساح؟", options: ["نصيحة من والديها", "قراءتها في مجلة الحيوان", "اعتقادها أنه جائع", "خوفها من التمساح"], correct: 2, type: "multiple_choice", level: "استنتاج" },
                     { q: "صل بين المكان والحدث", type: "matching", leftColumn: ["تحت منضدة الهاتف", "غرفة أمينة", "الممر", "غرفة المعيشة"], rightColumn: ["عودة طيور البجع للمجلة", "بناء المتراس", "أكل التمساح للطيور", "ظهور التمساح"], correctMatches: {"تحت منضدة الهاتف": "ظهور التمساح", "غرفة أمينة": "بناء المتراس", "الممر": "أكل التمساح للطيور", "غرفة المعيشة": "عودة طيور البجع للمجلة"}, level: "دمج المعلومات" },
                     { q: "رتب هذه الأشياء حسب ظهورها في القصة", type: "ordering", items: ["قبعة الأم المفقودة", "أزهار دوار الشمس", "المزهرية المكسورة", "بقعة البلل"], correctOrder: ["أزهار دوار الشمس", "المزهرية المكسورة", "قبعة الأم المفقودة", "بقعة البلل"], level: "دمج المعلومات" },
@@ -248,10 +248,17 @@
         });
         const defaultRecipient = 'kamel.fawwzia333@gmail.com';
         currentTest.recipientEmail = defaultRecipient;
-        document.getElementById('levelSelect').addEventListener('change', function() {
-            currentTest.level = this.value;
+        const levelSelect = document.getElementById('levelSelect');
+        if (levelSelect) {
+            const defaultLevel = 'فهم المقروء';
+            levelSelect.value = defaultLevel;
+            currentTest.level = defaultLevel;
+            levelSelect.addEventListener('change', function() {
+                currentTest.level = this.value;
+                checkFormComplete();
+            });
             checkFormComplete();
-        });
+        }
         document.getElementById('durationSelect').addEventListener('change', function() {
             currentTest.duration = parseInt(this.value);
             checkFormComplete();
@@ -273,7 +280,6 @@
         document.getElementById('continueBtn').addEventListener('click', function() {
             currentTest.studentName = currentTest.studentName || document.getElementById('studentName').value.trim();
             currentTest.recipientEmail = defaultRecipient;
-            document.getElementById('selectedSubject').textContent = currentTest.subject;
             document.getElementById('selectedLevel').textContent = currentTest.level;
             document.getElementById('selectedDuration').textContent = currentTest.duration === 0 ? 'بدون توقيت' : currentTest.duration + ' دقيقة';
 

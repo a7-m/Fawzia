@@ -14,26 +14,21 @@
   <div class="container"><!-- صفحة رئيسية -->
    <div id="homePage" class="page active">
     <div class="header">
-     <h1 id="schoolName">مدرسة الطالب الذكي الخاصة بنزوى</h1>
+     <div class="flex justify-center items-center">
+      <img class="schoolImg" src="images&video\pirls.png"> 
+      <h1 id="schoolName" class="ml-4">مدرسة الطالب الذكي الخاصة بنزوى</h1>
+      <img class="schoolImg" src="images&video\مدرسة الطالب الذكي.png"> 
+     </div>
      <p class="teacher-name"> مبادرة الأستاذة فوزية كمال فرغلي في إعداد صياغة أسئلة بيرلز</p>
      <p id="welcomeText">مرحباً بك في منصة اختبارات بيرلز</p>
     </div>
     <div class="form-group"><label>اسم الطالب</label> <input type="text" id="studentName" placeholder="أدخل اسمك الكامل">
     </div>
+    <div class="form-group"><label>الصف</label> <input type="text" id="gradeLevel" placeholder="أدخل الصف الدراسي">
+    </div>
     <div class="form-group"><label>البريد الإلكتروني لاستلام النتيجة</label> <input type="email" id="recipientEmail" value="kamel.fawwzia333@gmail.com" disabled>
     </div>
-    <div class="form-group"><label>المادة</label>
-     <div class="subject-grid">
-      <div class="subject-card selected" data-subject="لغة عربية">
-       <div class="subject-icon">
-        📚
-       </div>
-       <h3>اللغة العربية</h3>
-       <p style="margin: 10px 0 0 0; font-size: 0.9em; opacity: 0.9;">النحو والصرف والبلاغة</p>
-      </div>
-     </div>
-    </div>
-    <div class="form-group"><label>المستوى</label> <select id="levelSelect"> <option value="">اختر المستوى</option> <option value="سهل">سهل</option> <option value="متوسط">متوسط</option> <option value="صعب">صعب</option> <option value="فهم المقروء">فهم المقروء</option> </select>
+    <div class="form-group"><label>الفقرة</label> <select id="levelSelect"> <option value="">اختر الفقرة</option> <option value="فهم المقروء">فهم المقروء</option> </select>
     </div>
     <div class="form-group"><label>مدة الاختبار (دقيقة)</label> <select id="durationSelect"> <option value="0">بدون توقيت</option> <option value="15">15 دقيقة</option> <option value="30">30 دقيقة</option> <option value="45">45 دقيقة</option> <option value="60">60 دقيقة</option> </select>
     </div>
@@ -55,8 +50,7 @@
      </ul>
     </div>
     <div id="testInfo" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-     <p><strong>المادة:</strong> <span id="selectedSubject"></span></p>
-     <p><strong>المستوى:</strong> <span id="selectedLevel"></span></p>
+     <p><strong>الفقرة:</strong> <span id="selectedLevel"></span></p>
      <p><strong>المدة:</strong> <span id="selectedDuration"></span></p>
      <p><strong>عدد الأسئلة:</strong> <span id="totalQuestions"></span></p>
     </div>

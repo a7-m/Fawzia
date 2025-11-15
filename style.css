@@ -50,6 +50,22 @@
             font-size: 2.5em;
             margin: 0 0 10px 0;
             font-weight: 700;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .schoolImg {
+            height: 120px;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+            margin-left: -70px;
+            margin-right: 90px;
+        }
+
+        .schoolImg:first-child {
+            margin-left: 0;
+            margin-right: -70px;
+            margin-left: 90px;
         }
 
         .header p {
@@ -57,7 +73,7 @@
             font-size: 25px;
             margin: 0;
         }
-
+         
         .subject-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
