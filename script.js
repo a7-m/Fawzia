@@ -60,14 +60,14 @@
                     { q: "من أين جاء التمساح؟ (ارجع إلى الفقرة 3)", options: ["الحمام", "غلاف المجلة", "تحت السرير", "النهر القريب"], correct: 1, type: "multiple_choice", level: "استرجاع" },
                     { q: "أي الكلمات تبين أن أمينة كانت خائفة؟", options: ["تجمدت أمينة في مكانها", "لم تصدق عينيها", "اتسعت عيناها كصحني فنجان", "صوت منخفض كالهسيس"], correct: 0, type: "multiple_choice", level: "تفسير" },
                     { q: "لماذا فكرت أمينة أن التمساح سوف يهجم؟", options: ["أظهر صف أسنانه الطويلة", "أصدر صوتاً كالهسيس", "بدأ يشخر وينخر", "حرك ذيله إلى الأمام والخلف"], correct: 3, type: "multiple_choice", level: "استنتاج" },
-                    { q: "رتب هذه الجمل حسب ترتيب حدوثها في القصة", type: "ordering", items: ["بدأت أمينة مشيها إلى الحمام", "أكل التمساح طيرين من البجع", "حاولت أمينة أن تشرح لوالديها سبب كسر الباب", "رأت أمينة التمساح", "ركضت أمينة إلى غرفتها وأغلقت الباب"], correctOrder: ["بدأت أمينة مشيها إلى الحمام", "رأت أمينة التمساح", "ركضت أمينة إلى غرفتها وأغلقت الباب", "أكل التمساح طيرين من البجع", "حاولت أمينة أن تشرح لوالديها سبب كسر الباب"], level: "دمج المعلومات" },
+                    { q: "رتب هذه الجمل حسب ترتيب حدوثها في القصة", type: "ordering", items: ["رأت أمينة التمساح", "أكل التمساح طيرين من البجع", "حاولت أمينة أن تشرح لوالديها سبب كسر الباب", "بدأت أمينة مشيها إلى الحمام", "ركضت أمينة إلى غرفتها وأغلقت الباب"], correctOrder: ["بدأت أمينة مشيها إلى الحمام", "رأت أمينة التمساح", "ركضت أمينة إلى غرفتها وأغلقت الباب", "أكل التمساح طيرين من البجع", "حاولت أمينة أن تشرح لوالديها سبب كسر الباب"], level: "دمج المعلومات" },
                     { q: "لماذا نادت أمينة طيور البجع؟ اكتب سببًا واحدًا", type: "essay", modelAnswer: "(يقبل من الطالب ما يفيد المعنى) نادت أمينة طيور البجع لأنها فكرت أن التمساح جائع ويحتاج إلى طعام ليغادر البيت، وقد قرأت في مجلة الحيوان أن طيور البجع تشبه كعكة عيد الميلاد للتماسيح، فأرادت إطعامه حتى يشبع ويعود إلى مكانه في المجلة", level: "تفسير" },
                     { q: "ما سبب كسر الباب؟ (ارجع إلى الفقرة 7)", options: ["ضرب التمساح الباب بذيله فاخترقه", "ضربته المزهرية الكبيرة", "المنقار الحاد لطائر البجع اصطدم به", "اصطدم به السرير"], correct: 0, type: "multiple_choice", level: "استرجاع" },
                     { q: "كم عمر أمينة في القصة؟ (ارجع إلى الفقرة 1)", options: ["تسع سنوات", "عشر سنوات", "إحدى عشرة سنة", "ثماني سنوات"], correct: 1, type: "multiple_choice", level: "استرجاع" },
                     { q: 'اضغط على هذا الرابط واذكر معلومة واحدة جديدة عن التمساح: <a href="https://ar.wikipedia.org/wiki/%D8%AA%D9%85%D8%B3%D8%A7%D8%AD" target="_blank">اضغط هنا</a>', type: 'essay', modelAnswer: 'تقبل من الطالب جميع الإجابات', level: 'بحث وتطبيق' },
                     { q: "اختر كل ما ينطبق على الأشياء التي حدثت عندما ظهر التمساح", options: ["تساقطت الصحف والمجلات", "كسر المزهرية", "نثر أزهار دوار الشمس", "أكل الطعام من المطبخ", "ترك السجاد مبللاً", "خطف قبعة الأم"], correct: [0, 1, 2, 4], type: "multiple_select", level: "دمج المعلومات" },
                     { q: "صل بين الشخصية والفعل", type: "matching", leftColumn: ["أمينة", "التمساح", "طيور البجع", "الوالدان"], rightColumn: ["لم يصدقا القصة", "دفعت السرير خلف الباب", "أكل طائرين", "خطفت قبعة الأم"], correctMatches: {"أمينة": "دفعت السرير خلف الباب", "التمساح": "أكل طائرين", "طيور البجع": "خطفت قبعة الأم", "الوالدان": "لم يصدقا القصة"}, level: "دمج المعلومات" },
-                    { q: "رتب الأحداث حسب تسلسلها في القصة", type: "ordering", items: ["سماع صوت الهسيس", "اكتشاف المجلة الفارغة", "خروج طيور البجع", "عودة التمساح للمجلة"], correctOrder: ["سماع صوت الهسيس", "اكتشاف المجلة الفارغة", "خروج طيور البجع", "عودة التمساح للمجلة"], level: "دمج المعلومات" },
+                    { q: "رتب الأحداث حسب تسلسلها في القصة", type: "ordering", items: ["خروج طيور البجع", "اكتشاف المجلة الفارغة", "سماع صوت الهسيس", "عودة التمساح للمجلة"], correctOrder: ["سماع صوت الهسيس", "اكتشاف المجلة الفارغة", "خروج طيور البجع", "عودة التمساح للمجلة"], level: "دمج المعلومات" },
                     { q: "لماذا لم تهتم أمينة بالصوت في البداية؟", options: ["لأنها كانت خائفة", "لأنها كانت نصف نائمة", "لأنها لم تسمعه جيداً", "لأنها اعتادت على الأصوات"], correct: 1, type: "multiple_choice", level: "استنتاج" },
                     { q: "اختر جميع الأشياء التي فعلتها أمينة للحماية من التمساح", options: ["أغلقت الباب بشدة", "دفعت السرير خلف الباب", "اختبأت تحت السرير", "نادت على والديها", "بنت متراساً", "فتحت النافذة"], correct: [0, 1, 4], type: "multiple_select", level: "دمج المعلومات" },
                     { q: "ماذا لاحظت أمينة في غلاف مجلة الحيوان؟ (ارجع إلى الفقرة 5)", type: "dropdown", options: ["أصبح النهر فارغاً من التمساح", "اختفت المجلة تماماً", "تغير لون الغلاف", "ظهرت حيوانات جديدة"], correct: 0, level: "استرجاع" },
@@ -75,7 +75,7 @@
                     { q: "ما رأيك في تصرف أمينة في حل المشكلة؟ ", type: "essay", modelAnswer: " تصرفت أمينة بذكاء كبير (يقبل من الطالب ما يفيد المعنى)", level: "تقويم" },
                     { q: "ما الذي جعل أمينة تفكر في إطعام التمساح؟", options: ["نصيحة من والديها", "قراءتها في مجلة الحيوان", "اعتقادها أنه جائع", "خوفها من التمساح"], correct: 2, type: "multiple_choice", level: "استنتاج" },
                     { q: "صل بين المكان والحدث", type: "matching", leftColumn: ["تحت منضدة الهاتف", "غرفة أمينة", "الممر", "غرفة المعيشة"], rightColumn: ["عودة طيور البجع للمجلة", "بناء المتراس", "أكل التمساح للطيور", "ظهور التمساح"], correctMatches: {"تحت منضدة الهاتف": "ظهور التمساح", "غرفة أمينة": "بناء المتراس", "الممر": "أكل التمساح للطيور", "غرفة المعيشة": "عودة طيور البجع للمجلة"}, level: "دمج المعلومات" },
-                    { q: "رتب هذه الأشياء حسب ظهورها في القصة", type: "ordering", items: ["أزهار دوار الشمس", "بقعة البلل", "المزهرية المكسورة", "قبعة الأم المفقودة"], correctOrder: ["أزهار دوار الشمس", "المزهرية المكسورة", "قبعة الأم المفقودة", "بقعة البلل"], level: "دمج المعلومات" },
+                    { q: "رتب هذه الأشياء حسب ظهورها في القصة", type: "ordering", items: ["قبعة الأم المفقودة", "أزهار دوار الشمس", "المزهرية المكسورة", "بقعة البلل"], correctOrder: ["أزهار دوار الشمس", "المزهرية المكسورة", "قبعة الأم المفقودة", "بقعة البلل"], level: "دمج المعلومات" },
                     { q: "كيف عرفت أمينة أن التمساح خرج من المجلة؟", options: ["رأته يخرج مباشرة", "وجدت المجلة فارغة", "أخبرها والداها", "سمعت صوت خروجه"], correct: 1, type: "multiple_choice", level: "استنتاج" },
                     { q: "اختر كل ما ينطبق على الأدلة التي تركها التمساح في البيت", options: ["بقعة البلل على الأرض", "الباب المكسور", "المزهرية المكسورة", "النوافذ المفتوحة", "قبعة الأم المفقودة", "الأثاث المقلوب"], correct: [0, 1, 2, 4], type: "multiple_select", level: "دمج المعلومات" },
                     { q: "ماذا قالت أمينة للتمساح عندما أرادت إرجاعه؟ (ارجع إلى الفقرة 11)", options: ["اذهب بعيداً", "رجاء ارجع إلى بيتك", "لا تعد مرة أخرى", "أنت مخيف جداً"], correct: 1, type: "multiple_choice", level: "استرجاع" },
@@ -93,7 +93,6 @@
         let currentTest = {
             subject: '',
             level: '',
-            gradeLevel: '',
             duration: 0,
             studentName: '',
             recipientEmail: '',
@@ -177,12 +176,6 @@
             currentTest.studentName = this.value.trim();
             checkFormComplete();
         });
-        
-        document.getElementById('gradeLevel').addEventListener('input', function() {
-            currentTest.gradeLevel = this.value.trim();
-            checkFormComplete();
-        });
-        
         const defaultRecipient = 'kamel.fawwzia333@gmail.com';
         currentTest.recipientEmail = defaultRecipient;
         const levelSelect = document.getElementById('levelSelect');
@@ -203,12 +196,11 @@
 
         function checkFormComplete() {
             const name = currentTest.studentName;
-            const grade = currentTest.gradeLevel;
             const subject = currentTest.subject;
             const level = currentTest.level;
             const btn = document.getElementById('continueBtn');
 
-            if (name && grade && subject && level) {
+            if (name && subject && level) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
@@ -771,7 +763,7 @@
             orderingDiv.className = 'ordering-container';
 
             const instruction = document.createElement('p');
-            instruction.textContent = 'اسحب العناصر لترتيبها بالتسلسل الصحيح (العنصر الأول مثبت)';
+            instruction.textContent = 'اسحب العناصر لترتيبها بالتسلسل الصحيح';
             instruction.style.marginBottom = '20px';
             instruction.style.fontWeight = '600';
             instruction.style.textAlign = 'center';
@@ -779,8 +771,27 @@
             const itemsContainer = document.createElement('div');
             itemsContainer.className = 'ordering-items';
 
+            const pinnedItem = Array.isArray(q.correctOrder) && q.correctOrder.length > 0
+                ? q.correctOrder[0]
+                : null;
+
             const savedAnswer = currentTest.answers[currentTest.currentQuestion];
-            const itemsToShow = savedAnswer && Array.isArray(savedAnswer) ? savedAnswer : q.items.slice().sort(() => Math.random() - 0.5);
+            let itemsToShow;
+
+            if (savedAnswer && Array.isArray(savedAnswer)) {
+                const sanitizedAnswer = pinnedItem
+                    ? savedAnswer.filter(item => item !== pinnedItem)
+                    : [...savedAnswer];
+                itemsToShow = pinnedItem ? [pinnedItem, ...sanitizedAnswer] : sanitizedAnswer;
+            } else {
+                const shuffledItems = q.items.slice().sort(() => Math.random() - 0.5);
+                if (pinnedItem) {
+                    const withoutPinned = shuffledItems.filter(item => item !== pinnedItem);
+                    itemsToShow = [pinnedItem, ...withoutPinned];
+                } else {
+                    itemsToShow = shuffledItems;
+                }
+            }
 
             function updateOrderingNumbers() {
                 const items = itemsContainer.querySelectorAll('.ordering-item');
@@ -793,18 +804,15 @@
             itemsToShow.forEach((item, index) => {
                 const orderingItem = document.createElement('div');
                 orderingItem.className = 'ordering-item';
-                
-                // Lock the first item (index 0)
-                const isFirstItem = index === 0;
-                if (isFirstItem) {
-                    orderingItem.classList.add('locked-first');
-                    orderingItem.draggable = false;
-                } else {
-                    orderingItem.draggable = true;
-                }
-                
                 orderingItem.dataset.item = item;
-                orderingItem.dataset.locked = isFirstItem ? 'true' : 'false';
+
+                const isPinned = pinnedItem && item === pinnedItem;
+                if (!isPinned) {
+                    orderingItem.draggable = true;
+                } else {
+                    orderingItem.classList.add('fixed-ordering-item');
+                    orderingItem.draggable = false;
+                }
 
                 const itemText = document.createElement('span');
                 itemText.textContent = item;
@@ -813,20 +821,10 @@
                 numberSpan.className = 'ordering-number';
                 numberSpan.textContent = index + 1;
 
-                // Add lock icon for first item
-                if (isFirstItem) {
-                    const lockIcon = document.createElement('span');
-                    lockIcon.className = 'lock-icon';
-                    lockIcon.textContent = '🔒';
-                    lockIcon.style.marginLeft = '8px';
-                    lockIcon.style.fontSize = '0.9em';
-                    orderingItem.appendChild(lockIcon);
-                }
-
                 orderingItem.appendChild(itemText);
                 orderingItem.appendChild(numberSpan);
 
-                if (!isFirstItem) {
+                if (!isPinned) {
                     orderingItem.addEventListener('dragstart', function(e) {
                         this.classList.add('dragging');
                         e.dataTransfer.effectAllowed = 'move';
@@ -843,21 +841,20 @@
 
             itemsContainer.addEventListener('dragover', function(e) {
                 e.preventDefault();
-                const dragging = document.querySelector('.dragging');
+                const dragging = document.querySelector('.ordering-item.dragging');
+                if (!dragging) return;
                 const afterElement = getDragAfterElement(itemsContainer, e.clientY);
-                
-                // Get the first locked item
-                const firstLockedItem = itemsContainer.querySelector('.locked-first');
-                
-                // Prevent dropping before the first locked item
-                if (firstLockedItem && afterElement === firstLockedItem) {
-                    return; // Don't allow dropping before the locked item
+                const fixedElement = itemsContainer.querySelector('.fixed-ordering-item');
+                let targetElement = afterElement;
+
+                if (fixedElement && targetElement === fixedElement) {
+                    targetElement = fixedElement.nextElementSibling;
                 }
                 
-                if (afterElement == null) {
+                if (targetElement == null) {
                     itemsContainer.appendChild(dragging);
                 } else {
-                    itemsContainer.insertBefore(dragging, afterElement);
+                    itemsContainer.insertBefore(dragging, targetElement);
                 }
                 
                 updateOrderingNumbers();
@@ -865,7 +862,7 @@
             });
 
             function getDragAfterElement(container, y) {
-                const draggableElements = [...container.querySelectorAll('.ordering-item:not(.dragging):not(.locked-first)')];
+                const draggableElements = [...container.querySelectorAll('.ordering-item:not(.dragging)')];
                 
                 return draggableElements.reduce((closest, child) => {
                     const box = child.getBoundingClientRect();
@@ -881,7 +878,12 @@
 
             function updateOrderingAnswer() {
                 const orderedItems = Array.from(itemsContainer.children).map(el => el.dataset.item);
-                currentTest.answers[currentTest.currentQuestion] = orderedItems;
+                if (pinnedItem) {
+                    const filtered = orderedItems.filter(item => item !== pinnedItem);
+                    currentTest.answers[currentTest.currentQuestion] = [pinnedItem, ...filtered];
+                } else {
+                    currentTest.answers[currentTest.currentQuestion] = orderedItems;
+                }
                 showAnswerNote();
             }
 
@@ -1035,7 +1037,6 @@
         function buildResultSummary() {
             const lines = [
                 `اسم الطالب: ${currentTest.studentName || 'غير محدد'}`,
-                `الصف: ${currentTest.gradeLevel || 'غير محدد'}`,
                 `المادة: ${currentTest.subject || 'غير محددة'}`,
                 `المستوى: ${currentTest.level || 'غير محدد'}`,
                 `النتيجة: ${typeof currentTest.scorePercentage === 'number' ? currentTest.scorePercentage + '%' : 'غير متوفرة'}`,
@@ -1130,12 +1131,6 @@
             document.getElementById('correctCount').textContent = currentTest.correctCount;
             document.getElementById('incorrectCount').textContent = currentTest.incorrectCount;
             document.getElementById('timeSpent').textContent = formatDurationDisplay(currentTest.timeSpentSeconds);
-            
-            // Populate student information
-            document.getElementById('resultStudentName').textContent = currentTest.studentName || 'غير محدد';
-            document.getElementById('resultGradeLevel').textContent = currentTest.gradeLevel || 'غير محدد';
-            document.getElementById('resultLevel').textContent = currentTest.level || 'غير محدد';
-            document.getElementById('resultSubject').textContent = currentTest.subject || 'غير محدد';
 
             displayReview();
             showPage('resultsPage');
@@ -1249,7 +1244,6 @@
             
             // إعادة تعيين حقول النموذج
             document.getElementById('studentName').value = '';
-            document.getElementById('gradeLevel').value = '';
             document.getElementById('recipientEmail').value = defaultRecipient;
             document.getElementById('levelSelect').value = '';
             document.getElementById('durationSelect').value = '0';
