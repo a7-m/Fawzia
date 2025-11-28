@@ -22,32 +22,87 @@
   gtag('config', 'G-LJJ4F5EFRW');
 </script>
 </head>
- <body>
-  <div class="container"><!-- صفحة رئيسية -->
-   <div id="homePage" class="page active">
-    <div class="header">
-     <div class="flex justify-center items-center">
-      <img class="schoolImg" src="images&video\pirls.png"> 
-      <h1 id="schoolName" class="ml-4">مدرسة الطالب الذكي الخاصة بنزوى</h1>
-      <img class="schoolImg" src="images&video\مدرسة الطالب الذكي.png"> 
+ <body data-page="home">
+  <nav class="main-nav" aria-label="شريط التنقل">
+  <div class="nav-brand">
+   <a class="nav-logo" href="#homePage" data-page="home">
+    <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+    <span class="brand-text">اختبارات بيرلز</span>
+   </a>
+  </div>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navLinks">
+   <span class="sr-only">تبديل قائمة التنقل</span>
+   <span class="nav-toggle-bar"></span>
+   <span class="nav-toggle-bar"></span>
+   <span class="nav-toggle-bar"></span>
+  </button>
+  <ul id="navLinks" class="nav-links">
+   <li class="nav-item">
+    <a class="nav-link" data-page="home" href="#homePage">
+     <span class="nav-icon" aria-hidden="true">🏠</span>
+     <span class="nav-label">الرئيسية</span>
+    </a>
+   </li>
+   <li class="nav-item">
+    <a class="nav-link" href="#contact">
+     <span class="nav-icon" aria-hidden="true">✉️</span>
+     <span class="nav-label">اتصل بنا</span>
+    </a>
+   </li>
+   <li class="nav-item">
+    <a class="nav-link" href="#profile">
+     <span class="nav-icon" aria-hidden="true">🙍🏻‍♂️</span>
+     <span class="nav-label">الملف الشخصي</span>
+    </a>
+   </li>
+  </ul>
+  <div class="theme-toggle-container">
+   <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم">
+    <span class="theme-icon">🌙</span>
+   </button>
+  </div>
+ </nav>
+
+  <div class="container page-container active-container">
+   <section id="homePage" class="page active home-page" data-page="home">
+    <header class="page-header">
+     <h1 id="schoolName">مدرسة الطالب الذكي الخاصة بنزوى</h1>
+     <p id="welcomeText" class="page-subtitle">مرحباً بك في منصة اختبارات بيرلز</p>
+     <p class="page-meta">مبادرة الأستاذة : فوزية كمال فرغلي في إعداد صياغة أسئلة بيرلز</p>
+    </header>
+
+    <div class="hero-search" role="search">
+     <input type="text" class="search-input" placeholder="ابحث في أسئلة بيرلز والأدوات التعليمية" aria-label="بحث">
+     <button type="button" class="btn btn-search">بحث</button>
+    </div>
+
+    <section class="hero-card">
+     <h2>منصة اختبار حديثة مستوحاة من التصميم التربوي الحديث</h2>
+     <p>انطلق في تجربة تقييم مريحة للطلاب، مع تصميم عصري وخيارات مخصصة للمستويين <strong>ليلة لا تصدق</strong> و<strong>قطعة الصلصال الصغيرة</strong>.</p>
+     <div class="hero-actions">
+      <a class="btn btn-primary" href="#examForm">بدء اختبار جديد</a>
+      <a class="btn btn-ghost nav-link" data-page="results" href="#resultsPage">مشاهدة آخر النتائج</a>
      </div>
-     <p class="teacher-name"> مبادرة الأستاذة : فوزية كمال فرغلي في إعداد صياغة أسئلة بيرلز</p>
-     <p id="welcomeText">مرحباً بك في منصة اختبارات بيرلز</p>
-    </div>
-    <div class="form-group"><label>اسم الطالب</label> <input type="text" id="studentName" placeholder="أدخل اسمك الكامل">
-    </div>
-    <div class="form-group"><label>الصف</label> <input type="text" id="gradeLevel" placeholder="أدخل الصف الدراسي">
-    </div>
-    <div class="form-group"><label>البريد الإلكتروني لاستلام النتيجة</label> <input type="email" id="recipientEmail" value="kamel.fawwzia333@gmail.com" disabled>
-    </div>
-    <div class="form-group"><label>الفقرة</label> <select id="levelSelect"> <option value="">اختر الفقرة</option> <option value="ليلة لا تصدق">ليلة لا تصدق</option> <option value="قطعة الصلصال الصغيرة">قطعة الصلصال الصغيرة</option> </select>
-    </div>
-    <div class="form-group"><label>مدة الاختبار (دقيقة)</label> <select id="durationSelect"> <option value="0">بدون توقيت</option> <option value="15">15 دقيقة</option> <option value="30">30 دقيقة</option> <option value="45">45 دقيقة</option> <option value="60">60 دقيقة</option> </select>
-    </div>
-    <div class="btn-group"><button class="btn" id="continueBtn" disabled>متابعة</button>
-    </div>
-   </div><!-- صفحة القواعد -->
-   <div id="rulesPage" class="page">
+    </section>
+
+    <section class="home-form-card" id="examForm">
+     <h3>بيانات الاختبار</h3>
+     <p class="home-form-note">املأ البيانات الأساسية لبدء الاختبار، ويمكنك العودة في أي وقت لإكماله.</p>
+     <div class="home-form-grid">
+      <div class="form-group"><label for="studentName">اسم الطالب</label> <input type="text" id="studentName" placeholder="أدخل اسمك الكامل"></div>
+      <div class="form-group"><label for="gradeLevel">الصف</label> <input type="text" id="gradeLevel" placeholder="أدخل الصف الدراسي"></div>
+      <div class="form-group"><label for="recipientEmail">البريد الإلكتروني لاستلام النتيجة</label> <input type="email" id="recipientEmail" value="kamel.fawwzia333@gmail.com" disabled></div>
+      <div class="form-group"><label for="levelSelect">الفقرة</label> <select id="levelSelect"> <option value="">اختر الفقرة</option> <option value="ليلة لا تصدق">ليلة لا تصدق</option> <option value="قطعة الصلصال الصغيرة">قطعة الصلصال الصغيرة</option> </select></div>
+      <div class="form-group"><label for="durationSelect">مدة الاختبار (دقيقة)</label> <select id="durationSelect"> <option value="0">بدون توقيت</option> <option value="15">15 دقيقة</option> <option value="30">30 دقيقة</option> <option value="45">45 دقيقة</option> <option value="60">60 دقيقة</option> </select></div>
+     </div>
+     <div class="btn-group"><button class="btn btn-primary" id="continueBtn" disabled>متابعة</button>
+     </div>
+    </section>
+   </section>
+  </div>
+
+  <div class="container page-container">
+   <section id="rulesPage" class="page" data-page="rules">
     <div class="header">
      <h1 id="instructionsTitle">قواعد الاختبار</h1>
     </div>
@@ -61,89 +116,96 @@
       <li>يمكنك طباعة النتيجة أو تحميلها كملف PDF</li>
      </ul>
     </div>
-    <div id="testInfo" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <div id="testInfo" class="card-surface">
      <p><strong>الفقرة:</strong> <span id="selectedLevel"></span></p>
      <p><strong>المدة:</strong> <span id="selectedDuration"></span></p>
      <p><strong>عدد الأسئلة:</strong> <span id="totalQuestions"></span></p>
     </div>
-    <div class="btn-group"><button class="btn btn-secondary" id="backToHomeBtn">رجوع</button> <button class="btn" id="startTestBtn">ابدأ الاختبار</button>
+    <div class="btn-group">
+     <button class="btn btn-secondary" id="backToHomeBtn">رجوع</button>
+     <button class="btn" id="startTestBtn">ابدأ الاختبار</button>
     </div>
-   </div><!-- صفحة الاختبار -->
-   <div id="testPage" class="page">
+   </section>
+  </div>
+
+  <div class="container page-container">
+   <section id="testPage" class="page" data-page="test">
     <div class="header">
      <h1>الاختبار</h1>
     </div>
-    <div id="timerContainer" class="timer" style="display: none;">
+    <div id="timerContainer" class="timer">
      الوقت المتبقي: <span id="timeRemaining"></span>
     </div>
     <div class="progress-bar">
      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
     </div>
-    <p style="text-align: center; color: #666; margin-top: 10px;">السؤال <span id="currentQuestion">1</span> من <span id="totalQuestionsTest"></span></p>
+    <p class="question-progress">السؤال <span id="currentQuestion">1</span> من <span id="totalQuestionsTest"></span></p>
     <div class="question-container">
      <div class="question-header">
       <div class="question-number" id="questionNumber"></div>
       <div class="question-text" id="questionText"></div>
      </div>
      <div class="options-container" id="optionsContainer"></div>
-     <div id="answerNote" style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 20px; display: none;">
-      <p style="margin: 0; color: #2e7d32; font-weight: 600;">✓ تم حفظ إجابتك</p>
+     <div id="answerNote" class="answer-status" style="display: none;">
+      <p>✓ تم حفظ إجابتك</p>
      </div>
     </div>
-    <div class="btn-group"><button class="btn btn-secondary" id="prevBtn" disabled>السابق</button> <button class="btn btn-secondary" id="saveProgressBtn">حفظ والخروج</button> <button class="btn" id="nextBtn">التالي</button> <button class="btn" id="finishBtn" style="display: none;">إنهاء الاختبار</button>
+    <div class="btn-group">
+     <button class="btn btn-secondary" id="prevBtn" disabled>السابق</button>
+     <button class="btn btn-secondary" id="saveProgressBtn">حفظ والخروج</button>
+     <button class="btn" id="nextBtn">التالي</button>
+     <button class="btn" id="finishBtn" style="display: none;">إنهاء الاختبار</button>
     </div>
-   </div><!-- صفحة النتائج -->
-   <div id="resultsPage" class="page">
+    <div class="btn-group" style="margin-top: 15px; justify-content: flex-start;">
+     <button class="btn btn-secondary" id="showTextBtn" style="display: none;">عرض النص</button>
+    </div>
+   </section>
+  </div>
+
+  <div class="container">
+   <section id="resultsPage" class="page" data-page="results">
     <div class="header">
      <h1 id="resultsTitle">نتيجة الاختبار</h1>
     </div>
     <div class="results-summary">
      <div class="score-circle">
-      <div class="percentage" id="scorePercentage">
-       0%
-      </div>
-      <div class="label">
-       النتيجة
-      </div>
+      <div class="percentage" id="scorePercentage">0%</div>
+      <div class="label">النتيجة</div>
      </div>
      <div class="stats-grid">
       <div class="stat-card">
-       <div class="number" id="correctCount">
-        0
-       </div>
-       <div class="label">
-        إجابات صحيحة
-       </div>
+       <div class="number" id="correctCount">0</div>
+       <div class="label">إجابات صحيحة</div>
       </div>
       <div class="stat-card">
-       <div class="number" id="incorrectCount">
-        0
-       </div>
-       <div class="label">
-        إجابات خاطئة
-       </div>
+       <div class="number" id="incorrectCount">0</div>
+       <div class="label">إجابات خاطئة</div>
       </div>
       <div class="stat-card">
-       <div class="number" id="timeSpent">
-        0
-       </div>
-       <div class="label">
-        الوقت المستغرق
-       </div>
+       <div class="number" id="timeSpent">0</div>
+       <div class="label">الوقت المستغرق</div>
       </div>
      </div>
     </div>
     <div class="answer-review">
-     <h2 style="color: #1e3c72; margin-bottom: 20px;">مراجعة الإجابات</h2>
+     <h2 class="review-title">مراجعة الإجابات</h2>
      <div id="reviewContainer"></div>
     </div>
     <div class="resources">
-     <h3>مصادر للمراجعة</h3><a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📄 ملخص الدروس - ملف PDF</a> <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📊 شرح تفصيلي - صفحة كانفا</a> <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">🎥 فيديوهات تعليمية</a> <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📝 تمارين إضافية</a>
+     <h3>مصادر للمراجعة</h3>
+     <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📄 ملخص الدروس - ملف PDF</a>
+     <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📊 شرح تفصيلي - صفحة كانفا</a>
+     <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">🎥 فيديوهات تعليمية</a>
+     <a href="#" class="resource-link" target="_blank" rel="noopener noreferrer">📝 تمارين إضافية</a>
     </div>
-    <div class="btn-group"><button class="btn" id="sendResultBtn">إرسال النتيجة</button> <button class="btn btn-secondary" onclick="window.print()">طباعة النتيجة</button> <button class="btn" id="newTestBtn">اختبار جديد</button>
+    <div class="btn-group">
+     <button class="btn" id="sendResultBtn">إرسال النتيجة</button>
+     <button class="btn btn-secondary" id="printResultBtn">طباعة النتيجة</button>
+     <button class="btn" id="newTestBtn">اختبار جديد</button>
     </div>
-   </div>
+   </section>
   </div>
+
   <script src="script.js"></script>
  </body>
 </html>
