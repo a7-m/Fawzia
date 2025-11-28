@@ -361,6 +361,7 @@ a {
 
 .hero-search {
   margin: 0 auto;
+  margin-top: 20px;
   max-width: 520px;
   display: flex;
   gap: 12px;
@@ -384,6 +385,7 @@ a {
   background: linear-gradient(140deg, rgba(var(--primary-rgb), 0.16) 0%, var(--surface) 100%);
   border-radius: 26px;
   padding: 44px 38px;
+  margin: 20px 0 20px 0;
   border: 1px solid rgba(var(--border), 1);
   box-shadow: var(--shadow);
   text-align: center;

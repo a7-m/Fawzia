@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>لوحة التحكم — Fawzia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#5b2a86;--muted:#666}
+    body{font-family:'Cairo',sans-serif;margin:0;padding:20px;background:#fbf9fe;min-height:100vh;color:#222}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(90,60,120,0.05)}
+    .btn-logout{background:#fff;border:1px solid #eee;padding:10px 12px;border-radius:8px;cursor:pointer}
+    .welcome{font-size:20px;font-weight:700;color:var(--accent)}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="welcome" id="welcome">مرحبًا</div>
+      <div style="color:var(--muted);font-size:13px" id="emailLine"></div>
+    </div>
+    <div>
+      <button class="btn-logout" id="logoutBtn">تسجيل خروج</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <h3>لوحة التحكم</h3>
+      <p>هذه صفحة محمية — يمكن تعديل المحتوى هنا ليعرض معلومات المستخدم أو أدوات الموقع.</p>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    // يحمي الصفحة: إذا لم يكن المستخدم مسجلاً يتم تحويله إلى login.html
+    onAuthState((user)=>{
+      if(!user){
+        window.location.href = 'login.html';
+      }else{
+        document.getElementById('welcome').textContent = `مرحبا، ${user.displayName || ''}`;
+        document.getElementById('emailLine').textContent = user.email || '';
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOutUser();
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

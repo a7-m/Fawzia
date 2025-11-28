@@ -79,7 +79,7 @@
 
     <section class="hero-card">
      <h2>منصة اختبار حديثة مستوحاة من التصميم التربوي الحديث</h2>
-     <p>انطلق في تجربة تقييم مريحة للطلاب، مع تصميم عصري وخيارات مخصصة للمستويين <strong>ليلة لا تصدق</strong> و<strong>قطعة الصلصال الصغيرة</strong>.</p>
+     <p>انطلق في تجربة تقييم مريحة للطلاب، مع تصميم عصري وخيارات متعددة للمستويين .</p>
      <div class="hero-actions">
       <a class="btn btn-primary" href="#examForm">بدء اختبار جديد</a>
       <a class="btn btn-ghost nav-link" data-page="results" href="#resultsPage">مشاهدة آخر النتائج</a>
@@ -208,5 +208,28 @@
   </div>
 
   <script src="script.js"></script>
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAS5JQrXf5YD0K6tPcpCjdY_BxjwPK2YZw",
+    authDomain: "fawzia-1983.firebaseapp.com",
+    projectId: "fawzia-1983",
+    storageBucket: "fawzia-1983.firebasestorage.app",
+    messagingSenderId: "868033763100",
+    appId: "1:868033763100:web:2105ba0f2a709ea8110cd9",
+    measurementId: "G-CCDSQEBEHN"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
  </body>
 </html>
