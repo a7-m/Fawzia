@@ -1310,11 +1310,13 @@ q.leftColumn.forEach((item, index) => {
     }
 
     rightItem.addEventListener('click', function() {
-        // إذا كان متصل، إبراز التوصيلة
-        if (leftKey) {
+        // تحديد إذا كان العنصر مرتبط حاليًا استنادًا إلى matches
+        const currentLeftKey = Object.keys(matches).find(key => matches[key] === item);
+        if (currentLeftKey) {
+            // إبراز التوصيلة
             document.querySelectorAll('.matching-item').forEach(el => el.classList.remove('matching-highlight'));
             this.classList.add('matching-highlight');
-            const leftEl = leftColumn.querySelector(`[data-item="${leftKey}"]`);
+            const leftEl = leftColumn.querySelector(`[data-item="${currentLeftKey}"]`);
             if (leftEl) leftEl.classList.add('matching-highlight');
             setTimeout(() => {
                 this.classList.remove('matching-highlight');
@@ -1355,16 +1357,22 @@ q.leftColumn.forEach((item, index) => {
                 cancelBtn.className = 'matching-cancel-btn';
                 cancelBtn.onclick = function(e) {
                     e.stopPropagation();
-                    delete matches[selectedLeft];
-                    currentTest.answers[currentTest.currentQuestion] = { ...matches };
+                    const lKey = leftEl.dataset.item;
+                    const rKey = matches[lKey];
+                    if (rKey) {
+                        delete matches[lKey];
+                        currentTest.answers[currentTest.currentQuestion] = { ...matches };
+                    }
                     leftEl.classList.remove('matched');
                     leftEl.style.background = '';
-                    const rightEl = rightColumn.querySelector(`[data-item="${item}"]`);
-                    if (rightEl) {
-                        rightEl.classList.remove('matched');
-                        rightEl.style.background = '';
-                        const btn = rightEl.querySelector('.matching-cancel-btn');
-                        if (btn) rightEl.removeChild(btn);
+                    if (rKey) {
+                        const rightEl = rightColumn.querySelector(`[data-item="${rKey}"]`);
+                        if (rightEl) {
+                            rightEl.classList.remove('matched');
+                            rightEl.style.background = '';
+                            const btn = rightEl.querySelector('.matching-cancel-btn');
+                            if (btn) rightEl.removeChild(btn);
+                        }
                     }
                     if (leftEl.querySelector('.matching-cancel-btn')) leftEl.removeChild(cancelBtn);
                 };
@@ -1381,16 +1389,22 @@ q.leftColumn.forEach((item, index) => {
             cancelBtn.className = 'matching-cancel-btn';
             cancelBtn.onclick = function(e) {
                 e.stopPropagation();
-                delete matches[selectedLeft];
-                currentTest.answers[currentTest.currentQuestion] = { ...matches };
+                const rKey = rightItem.dataset.item;
+                const lKey = Object.keys(matches).find(k => matches[k] === rKey);
+                if (lKey) {
+                    delete matches[lKey];
+                    currentTest.answers[currentTest.currentQuestion] = { ...matches };
+                }
                 rightItem.classList.remove('matched');
                 rightItem.style.background = '';
-                const leftEl = leftColumn.querySelector(`[data-item="${selectedLeft}"]`);
-                if (leftEl) {
-                    leftEl.classList.remove('matched');
-                    leftEl.style.background = '';
-                    const btn = leftEl.querySelector('.matching-cancel-btn');
-                    if (btn) leftEl.removeChild(btn);
+                if (lKey) {
+                    const leftEl = leftColumn.querySelector(`[data-item="${lKey}"]`);
+                    if (leftEl) {
+                        leftEl.classList.remove('matched');
+                        leftEl.style.background = '';
+                        const btn = leftEl.querySelector('.matching-cancel-btn');
+                        if (btn) leftEl.removeChild(btn);
+                    }
                 }
                 if (rightItem.querySelector('.matching-cancel-btn')) rightItem.removeChild(cancelBtn);
             };
