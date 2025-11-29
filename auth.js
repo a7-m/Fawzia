@@ -38,7 +38,7 @@ const TEACHER_EMAIL = "kamel.fawwzia333@gmail.com";
 // Helper: اختار الصفحة المناسبة حسب الدور
 const redirectBasedOnRole = (user) => {
   if (!user) return "login.html";
-  return user.email === TEACHER_EMAIL ? "dashboard.html" : "profile.html";
+  return user.email === TEACHER_EMAIL ? "admin.html" : "dashboard.html";
 };
 
 // Utility: Redirect helpers
@@ -61,11 +61,11 @@ const route = () => {
     case "forgot.html":
       initForgotPage();
       break;
+    case "admin.html":
+      initAdminPage();
+      break;
     case "dashboard.html":
       initDashboardPage();
-      break;
-    case "profile.html":
-      initProfilePage();
       break;
     default:
       // No specific auth handling

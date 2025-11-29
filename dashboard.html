@@ -3,52 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>لوحة تحكم المعلمة | مدرسة Fawzia</title>
+    <title>لوحة المستخدم | Fawzia</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="min-h-screen flex flex-col bg-[--background] text-[--text]">
-    <nav class="main-nav" aria-label="شريط التنقل">
-      <div class="nav-brand">
-        <a class="nav-logo" href="index.html">
-          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
-          <span class="brand-text">اختبارات بيرلز</span>
-        </a>
-      </div>
-      <ul class="nav-links">
-        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
-        <li class="nav-item"><a class="nav-link" href="profile.html">الملف الشخصي</a></li>
-        <li class="nav-item"><a class="nav-link" href="login.html">تسجيل الدخول</a></li>
-      </ul>
-      <div class="theme-toggle-container">
-        <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم"><span class="theme-icon">🌙</span></button>
-      </div>
-    </nav>
-    <header class="flex items-center justify-between p-6 bg-[--primary] text-[--text-inverse] shadow-md">
-      <h1 class="text-xl font-bold">لوحة تحكم المعلمة</h1>
-      <button id="logoutBtn" class="btn btn-ghost hover:bg-[rgba(var(--text-rgb),0.14)]">تسجيل الخروج</button>
-    </header>
-    <main class="flex-1 p-8 overflow-x-auto space-y-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold">الطلاب (<span id="totalStudents">0</span>)</h2>
-        <button id="addStudentBtn" class="btn">إضافة طالب</button>
-      </div>
-      <div class="overflow-x-auto rounded-xl shadow">
-        <table class="min-w-full bg-[--surface] text-sm">
-          <thead>
-            <tr class="bg-gray-100 text-[--text]">
-              <th class="px-3 py-2 text-right font-semibold">الاسم</th>
-              <th class="px-3 py-2 text-right font-semibold">الصف</th>
-              <th class="px-3 py-2 text-right font-semibold">رقم الطالب</th>
-              <th class="px-3 py-2 text-center font-semibold">إجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="studentsRows"></tbody>
-        </table>
-      </div>
-    </main>
+  <body class="min-h-screen bg-slate-950 text-slate-50">
+    <div class="page-shell">
+      <header class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-xl font-bold">لوحة المستخدم</h1>
+          <p class="text-sm text-slate-300">مرحباً بك في حسابك</p>
+        </div>
+        <button id="logoutBtn" class="btn-ghost">تسجيل الخروج</button>
+      </header>
+
+      <main class="grid gap-6 md:grid-cols-[auto,minmax(0,1fr)] items-center">
+        <div class="avatar-card">
+          <img id="userAvatar" class="h-20 w-20 rounded-full ring-4 ring-indigo-500/60 object-cover" alt="صورة المستخدم" />
+        </div>
+
+        <div class="info-card">
+          <h2 id="userName" class="text-2xl font-bold mb-1">...</h2>
+          <p id="userEmail" class="text-sm text-slate-300 mb-3">...</p>
+          <span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">
+            الدور: <span id="userRole" class="ml-1">user</span>
+          </span>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="firebase.js"></script>
     <script type="module" src="auth.js"></script>
-    <script src="script.js"></script>
   </body>
 </html>
