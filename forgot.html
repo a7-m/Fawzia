@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نسيت كلمة السر | مدرسة Fawzia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+  </head>
+  <body class="min-h-screen flex flex-col bg-[--background] text-[--text]">
+    <nav class="main-nav" aria-label="شريط التنقل">
+      <div class="nav-brand">
+        <a class="nav-logo" href="index.html">
+          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+          <span class="brand-text">اختبارات بيرلز</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="profile.html">الملف الشخصي</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">تسجيل الدخول</a></li>
+      </ul>
+      <div class="theme-toggle-container">
+        <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم"><span class="theme-icon">🌙</span></button>
+      </div>
+    </nav>
+    <main class="flex-1 flex items-center justify-center p-6">
+      <section class="w-full max-w-md bg-[--surface] shadow-lg rounded-2xl p-8 mx-4">
+        <h1 class="text-2xl font-bold mb-6 text-center">إعادة تعيين كلمة المرور</h1>
+        <form id="forgotForm" class="space-y-4">
+          <div class="flex flex-col gap-2">
+            <label for="resetEmail" class="font-semibold">البريد الإلكتروني</label>
+            <input id="resetEmail" type="email" required placeholder="student@example.com" class="form-group input" />
+          </div>
+          <button type="submit" class="btn w-full">إرسال رابط إعادة التعيين</button>
+        </form>
+        <div class="text-center mt-6">
+          <a href="login.html" class="text-sm text-[--primary] hover:underline">العودة إلى تسجيل الدخول</a>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="auth.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

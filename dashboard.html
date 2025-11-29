@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة تحكم المعلمة | مدرسة Fawzia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+  </head>
+  <body class="min-h-screen flex flex-col bg-[--background] text-[--text]">
+    <nav class="main-nav" aria-label="شريط التنقل">
+      <div class="nav-brand">
+        <a class="nav-logo" href="index.html">
+          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+          <span class="brand-text">اختبارات بيرلز</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="profile.html">الملف الشخصي</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">تسجيل الدخول</a></li>
+      </ul>
+      <div class="theme-toggle-container">
+        <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم"><span class="theme-icon">🌙</span></button>
+      </div>
+    </nav>
+    <header class="flex items-center justify-between p-6 bg-[--primary] text-[--text-inverse] shadow-md">
+      <h1 class="text-xl font-bold">لوحة تحكم المعلمة</h1>
+      <button id="logoutBtn" class="btn btn-ghost hover:bg-[rgba(var(--text-rgb),0.14)]">تسجيل الخروج</button>
+    </header>
+    <main class="flex-1 p-8 overflow-x-auto space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold">الطلاب (<span id="totalStudents">0</span>)</h2>
+        <button id="addStudentBtn" class="btn">إضافة طالب</button>
+      </div>
+      <div class="overflow-x-auto rounded-xl shadow">
+        <table class="min-w-full bg-[--surface] text-sm">
+          <thead>
+            <tr class="bg-gray-100 text-[--text]">
+              <th class="px-3 py-2 text-right font-semibold">الاسم</th>
+              <th class="px-3 py-2 text-right font-semibold">الصف</th>
+              <th class="px-3 py-2 text-right font-semibold">رقم الطالب</th>
+              <th class="px-3 py-2 text-center font-semibold">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="studentsRows"></tbody>
+        </table>
+      </div>
+    </main>
+    <script type="module" src="auth.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
