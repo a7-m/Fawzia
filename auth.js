@@ -183,7 +183,7 @@ function initDashboardPage() {
 
   onAuthStateChanged(auth, (user) => {
     if (!user) return goTo("login.html");
-    if (user.email !== TEACHER_EMAIL) return goTo("profile.html");
+    if (user.email !== TEACHER_EMAIL) return goTo("dashboard.html");
 
     // Real-time students listener
     onSnapshot(collection(db, "students"), (snapshot) => {
