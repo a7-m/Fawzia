@@ -11,6 +11,7 @@ import {
 import { auth, db } from "./firebase.js";
 
 const USERS_COLLECTION = "users";
+const TEACHER_EMAIL = "kamel.fawwzia333@gmail.com";
 
 async function getUserData(uid) {
   const ref = doc(db, USERS_COLLECTION, uid);
@@ -69,6 +70,45 @@ async function loadUsersTable() {
   });
 }
 
+async function loadResultsTable() {
+  const tbody = document.getElementById("resultsTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  const studentsSnap = await getDocs(collection(db, "students"));
+  const studentsMap = new Map();
+  studentsSnap.forEach((docSnap) => {
+    studentsMap.set(docSnap.id, docSnap.data());
+  });
+
+  const resultsSnap = await getDocs(collection(db, "results"));
+
+  resultsSnap.forEach((docSnap) => {
+    const r = docSnap.data();
+    const student = r.uid ? studentsMap.get(r.uid) || {} : {};
+    const createdAt =
+      r.createdAt && typeof r.createdAt.toDate === "function"
+        ? r.createdAt.toDate().toLocaleString("ar-EG")
+        : "";
+    const score =
+      typeof r.scorePercentage === "number" ? r.scorePercentage + "%" : "-";
+
+    const tr = document.createElement("tr");
+    tr.className = "border-b border-slate-100";
+    tr.innerHTML = `
+      <td class="px-4 py-2 text-right">${student.name || r.studentName || "-"}</td>
+      <td class="px-4 py-2 text-right">${student.class || "-"}</td>
+      <td class="px-4 py-2 text-right">${student.number || "-"}</td>
+      <td class="px-4 py-2 text-right">${r.subject || "-"}</td>
+      <td class="px-4 py-2 text-right">${r.level || "-"}</td>
+      <td class="px-4 py-2 text-right">${score}</td>
+      <td class="px-4 py-2 text-right">${createdAt}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
 function initAdminPage() {
   const tbody = document.getElementById("usersTableBody");
   const logoutBtn = document.getElementById("logoutBtn");
@@ -79,16 +119,23 @@ function initAdminPage() {
       return;
     }
 
-    const me = await getUserData(user.uid);
+    let me = await getUserData(user.uid);
+    if (!me && user.email === TEACHER_EMAIL) {
+      me = { name: user.displayName || user.email, email: user.email, role: "admin" };
+    }
+
     if (!me || me.role !== "admin") {
-      // user عادي يحاول دخول صفحة admin
       window.location.href = "dashboard.html";
       return;
     }
 
+    const profileLink = document.getElementById("profileLink");
+    if (profileLink) profileLink.href = "admin.html";
+
     document.getElementById("adminName").textContent = me.name || me.email || "مشرف";
     document.getElementById("adminEmail").textContent = me.email || "";
     await loadUsersTable();
+    await loadResultsTable();
   });
 
   if (tbody) {

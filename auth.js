@@ -13,7 +13,7 @@ import {
   updateProfile,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, getDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // ------------------------------
 // Firebase Configuration
@@ -43,6 +43,14 @@ const redirectBasedOnRole = (user) => {
 
 // Utility: Redirect helpers
 const goTo = (path) => window.location.replace(path);
+
+// Global: Update navbar profile link based on auth state
+onAuthStateChanged(auth, (user) => {
+  const link = document.getElementById("profileLink");
+  if (link) {
+    link.href = redirectBasedOnRole(user);
+  }
+});
 
 // ------------------------------
 // Page-specific logic dispatcher
@@ -177,80 +185,88 @@ function initForgotPage() {
 // ------------------------------
 function initDashboardPage() {
   const logoutBtn = document.getElementById("logoutBtn");
-  const totalEl = document.getElementById("totalStudents");
-  const tbody = document.getElementById("studentsRows");
-  const addBtn = document.getElementById("addStudentBtn");
+  const nameEl = document.getElementById("userName");
+  const emailEl = document.getElementById("userEmail");
+  const roleEl = document.getElementById("userRole");
+  const extraEl = document.getElementById("userExtra");
 
-  onAuthStateChanged(auth, (user) => {
-    if (!user) return goTo("login.html");
-    if (user.email !== TEACHER_EMAIL) return goTo("dashboard.html");
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      goTo("login.html");
+      return;
+    }
 
-    // Real-time students listener
-    onSnapshot(collection(db, "students"), (snapshot) => {
-      if (tbody) tbody.innerHTML = "";
-      snapshot.forEach((snap) => {
-        const data = snap.data();
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td class="px-3 py-2">${data.name || "-"}</td>
-          <td class="px-3 py-2">${data.class || "-"}</td>
-          <td class="px-3 py-2">${data.number || "-"}</td>
-          <td class="px-3 py-2 flex gap-2 justify-center">
-            <button class="edit btn-sm" data-id="${snap.id}">تعديل</button>
-            <button class="delete btn-sm text-red-600" data-id="${snap.id}">حذف</button>
-          </td>`;
-        tbody.appendChild(tr);
-      });
-      if (totalEl) totalEl.textContent = snapshot.size;
-    });
+    const isTeacher = user.email === TEACHER_EMAIL;
+
+    if (nameEl) nameEl.textContent = user.displayName || user.email || "...";
+    if (emailEl) emailEl.textContent = user.email || "";
+    if (roleEl) roleEl.textContent = isTeacher ? "معلمة" : "طالب";
+
+    if (!isTeacher) {
+      try {
+        const snap = await getDoc(doc(db, "students", user.uid));
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.name && nameEl) nameEl.textContent = data.name;
+          if (extraEl) {
+            const cls = data.class || "-";
+            const num = data.number || "-";
+            extraEl.textContent = `الصف: ${cls} 	 رقم الطالب: ${num}`;
+          }
+        }
+      } catch (_) {
+      }
+
+      await loadStudentResults(user);
+    }
   });
 
-  // Logout
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       goTo("login.html");
     });
   }
+}
+  
+async function loadStudentResults(user) {
+  const tbody = document.getElementById("studentResultsBody");
+  const emptyEl = document.getElementById("studentResultsEmpty");
+  if (!tbody || !user) return;
 
-  // Add student
-  if (addBtn) {
-    addBtn.addEventListener("click", async () => {
-      const name = prompt("اسم الطالب");
-      if (!name) return;
-      const studentClass = prompt("الصف");
-      const number = prompt("رقم الطالب");
-      await addDoc(collection(db, "students"), {
-        name,
-        class: studentClass,
-        number,
-        createdAt: Date.now(),
-      });
+  tbody.innerHTML = "";
+
+  try {
+    const qRef = query(
+      collection(db, "results"),
+      where("uid", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+    const snap = await getDocs(qRef);
+
+    if (snap.empty) {
+      if (emptyEl) emptyEl.style.display = "block";
+      return;
+    }
+
+    if (emptyEl) emptyEl.style.display = "none";
+
+    snap.forEach((docSnap) => {
+      const r = docSnap.data();
+      const tr = document.createElement("tr");
+      const createdAt = r.createdAt && typeof r.createdAt.toDate === "function" ? r.createdAt.toDate().toLocaleString("ar-EG") : "";
+      const score = typeof r.scorePercentage === "number" ? r.scorePercentage + "%" : "-";
+
+      tr.innerHTML = `
+        <td class="px-4 py-2">${createdAt}</td>
+        <td class="px-4 py-2">${r.subject || "-"}</td>
+        <td class="px-4 py-2">${r.level || "-"}</td>
+        <td class="px-4 py-2">${score}</td>
+      `;
+      tbody.appendChild(tr);
     });
-  }
-
-  // Edit / Delete delegation
-  if (tbody) {
-    tbody.addEventListener("click", async (e) => {
-      const target = e.target;
-      const id = target.dataset.id;
-      if (!id) return;
-
-      if (target.classList.contains("edit")) {
-        const docRef = doc(db, "students", id);
-        const snap = await getDoc(docRef);
-        const data = snap.data();
-        const name = prompt("اسم الطالب", data.name);
-        if (!name) return;
-        const studentClass = prompt("الصف", data.class);
-        const number = prompt("رقم الطالب", data.number);
-        await updateDoc(docRef, { name, class: studentClass, number });
-      } else if (target.classList.contains("delete")) {
-        if (confirm("هل أنت متأكد من حذف هذا الطالب؟")) {
-          await deleteDoc(doc(db, "students", id));
-        }
-      }
-    });
+  } catch (e) {
+    if (emptyEl) emptyEl.style.display = "block";
   }
 }
   

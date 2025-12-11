@@ -51,7 +51,7 @@
     </a>
    </li>
    <li class="nav-item">
-    <a class="nav-link" href="dashboard.html">
+    <a class="nav-link" href="dashboard.html" id="profileLink">
      <span class="nav-icon" aria-hidden="true">🙍🏻‍♂️</span>
      <span class="nav-label">الملف الشخصي</span>
     </a>
@@ -212,6 +212,47 @@
     </div>
    </section>
   </div>
+
+  <script type="module">
+   import { auth, db } from "./firebase.js";
+   import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+   onAuthStateChanged(auth, (user) => {
+     const link = document.getElementById("profileLink");
+     if (link) {
+       if (!user) {
+         link.href = "login.html";
+       } else if (user.email === "kamel.fawwzia333@gmail.com") {
+         link.href = "admin.html";
+       } else {
+         link.href = "dashboard.html";
+       }
+     }
+   });
+
+   window.saveTestResult = async function(result) {
+     try {
+       const user = auth.currentUser;
+       if (!user) {
+         return;
+       }
+       await addDoc(collection(db, "results"), {
+         uid: user.uid,
+         studentName: result.studentName || "",
+         subject: result.subject || "",
+         level: result.level || "",
+         scorePercentage: typeof result.scorePercentage === "number" ? result.scorePercentage : null,
+         correctCount: typeof result.correctCount === "number" ? result.correctCount : null,
+         incorrectCount: typeof result.incorrectCount === "number" ? result.incorrectCount : null,
+         timeSpentSeconds: typeof result.timeSpentSeconds === "number" ? result.timeSpentSeconds : null,
+         createdAt: serverTimestamp(),
+       });
+     } catch (e) {
+       console.error("Failed to save result", e);
+     }
+   };
+  </script>
 
   <script src="script.js"></script>
  </body>

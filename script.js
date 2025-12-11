@@ -1798,6 +1798,14 @@ q.leftColumn.forEach((item, index) => {
             document.getElementById('incorrectCount').textContent = currentTest.incorrectCount;
             document.getElementById('timeSpent').textContent = formatDurationDisplay(currentTest.timeSpentSeconds);
 
+            if (typeof window.saveTestResult === 'function') {
+                try {
+                    window.saveTestResult(currentTest);
+                } catch (e) {
+                    console.error('Failed to persist result', e);
+                }
+            }
+
             displayReview();
             navigateTo('results');
         }
