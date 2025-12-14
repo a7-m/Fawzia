@@ -1183,4 +1183,29 @@ body,
     min-width: 0;
     max-width: 100%;
   }
+}.highlight-paragraph {
+    background-color: #fff9c4; /* Light yellow highlight */
+    transition: background-color 2s ease-out;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+}
+
+.scroll-to-paragraph-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: all 0.2s;
+}
+
+.scroll-to-paragraph-btn:hover {
+    background-color: var(--primary);
+    color: white;
 }
