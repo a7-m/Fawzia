@@ -1700,7 +1700,7 @@ q.leftColumn.forEach((item, index) => {
             note.style.display = 'block';
             setTimeout(() => {
                 note.style.display = 'none';
-            }, 2000);
+            }, 5000);
         }
 
         document.getElementById('prevBtn').addEventListener('click', function() {
