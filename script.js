@@ -1,4 +1,13 @@
 
+import { auth, db } from "./firebase.js";
+import { 
+    collection, 
+    addDoc, 
+    getDocs,
+    serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
         const defaultConfig = {
             school_name: "مدرسة الطالب الذكي الخاصة بنزوى",
             welcome_text: "مرحباً بك في منصة الاختبارات التعليمية",
@@ -402,6 +411,109 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
             currentTest.subject = 'لغة عربية';
         }
 
+
+        // --- Dynamic Test Loading Logic ---
+        async function fetchTestsFromFirestore() {
+            try {
+                const q = collection(db, "tests");
+                const querySnapshot = await getDocs(q);
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const subject = data.subject || "لغة عربية";
+                    const title = data.title;
+                    const qList = data.questions || [];
+                    
+                    // Add to global questions object
+                    if (!questions[subject]) {
+                        questions[subject] = {};
+                    }
+                    
+                    // Add reading passage text if needed (hacky injection or standardized)
+                    // The app currently uses `readingPassage` variable for the first test
+                    // We need a way to store the passage text dynamically. 
+                    // Let's store it in a global map:
+                    if (!window.dynamicPassages) window.dynamicPassages = {};
+                    window.dynamicPassages[title] = data.passage;
+                    
+                    // Add questions
+                    questions[subject][title] = qList;
+
+                    // Also need to update the options in the select dropdown
+                    updateLevelSelect(title);
+                });
+                
+                console.log("Tests loaded from Firestore");
+            } catch (e) {
+                console.error("Error loading tests: ", e);
+            }
+        }
+
+        function updateLevelSelect(newTitle) {
+            const select = document.getElementById('levelSelect');
+            if (select) {
+                // Check if already exists
+                let exists = false;
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === newTitle) {
+                        exists = true;
+                        break;
+                    }
+                }
+                
+                if (!exists) {
+                    const opt = document.createElement('option');
+                    opt.value = newTitle;
+                    opt.textContent = newTitle;
+                    select.appendChild(opt);
+                }
+            }
+        }
+
+
+        // --- Auth & Saving Logic (Moved from index.html) ---
+        onAuthStateChanged(auth, (user) => {
+            const link = document.getElementById("profileLink");
+            if (link) {
+                if (!user) {
+                    link.href = "login.html";
+                } else if (user.email === "kamel.fawwzia333@gmail.com") {
+                    link.href = "admin.html";
+                } else {
+                    link.href = "dashboard.html";
+                }
+            }
+        });
+
+        window.saveTestResult = async function (result) {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    // Maybe prompt login or save locally? For now return.
+                    console.log("User not logged in, result not saved to cloud.");
+                    return;
+                }
+                await addDoc(collection(db, "results"), {
+                    uid: user.uid,
+                    studentName: result.studentName || "",
+                    subject: result.subject || "",
+                    level: result.level || "",
+                    scorePercentage: typeof result.scorePercentage === "number" ? result.scorePercentage : null,
+                    correctCount: typeof result.correctCount === "number" ? result.correctCount : null,
+                    incorrectCount: typeof result.incorrectCount === "number" ? result.incorrectCount : null,
+                    timeSpentSeconds: typeof result.timeSpentSeconds === "number" ? result.timeSpentSeconds : null,
+                    createdAt: serverTimestamp(),
+                });
+                console.log("Result saved successfully");
+            } catch (e) {
+                console.error("Failed to save result", e);
+            }
+        };
+
+        // Start fetching
+        fetchTestsFromFirestore();
+
+
         function syncQuestionsWithCurrentLevel() {
             if (!currentTest.level) {
                 currentTest.questions = [];
@@ -411,9 +523,19 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
             const subjectData = questions[currentTest.subject] || {};
             currentTest.questions = subjectData[currentTest.level] ? subjectData[currentTest.level] : [];
 
+            // Dynamic Passage Injection
+            const dynamicPassage = window.dynamicPassages ? window.dynamicPassages[currentTest.level] : null;
+            if (dynamicPassage) {
+                // Determine where to put it. 
+                // The current app hardcodes variables `readingPassage`, `readingPassage2`, etc.
+                // And likely injects them based on selection in another function.
+                // We need to find where the passage is rendered.
+                // Looking at `questions` object above, it doesn't seem to link to variables directly.
+                // Let's scroll down to find render logic.
+            }
+
             updateRulesSummary();
         }
-
         function updateRulesSummary() {
             const levelDisplay = document.getElementById('selectedLevel');
             if (levelDisplay) {
@@ -518,12 +640,23 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
         });
 
         const initialPageId = currentTest.lastVisitedPage || 'home';
-        showSection(initialPageId);
-        setActiveNav(initialPageId);
-        updateRulesSummary();
+        
+        // Only run SPA navigation if we are on the main test page (which has a home section)
+        if (document.querySelector('[data-page="home"]')) {
+            showSection(initialPageId);
+            setActiveNav(initialPageId);
+            updateRulesSummary();
 
-        if (initialPageId === 'test') {
-            prepareTestPage();
+            if (initialPageId === 'test') {
+                prepareTestPage();
+            }
+        } else {
+             // For Admin / Dashboard, ensure theme is applied but don't hide pages
+             // We might want to ensure the single page is active if it was hidden by default CSS
+             const orphanPages = document.querySelectorAll('.page');
+             if (orphanPages.length === 1) {
+                 orphanPages[0].classList.add('active');
+             }
         }
 
         const mainNav = document.querySelector('.main-nav');
@@ -623,23 +756,31 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
         // Theme Toggle Functionality
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.querySelector('.theme-icon');
+        const htmlElement = document.documentElement;
         
         // Check for saved theme preference or default to light theme
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.body.classList.toggle('dark-theme', currentTheme === 'dark');
-        updateThemeIcon(currentTheme);
-        applyThemeStyles();
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
         
-        
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                htmlElement.classList.add('dark'); // For Tailwind
+                updateThemeIcon('dark');
+            } else {
+                document.body.classList.remove('dark-theme');
+                htmlElement.classList.remove('dark');
+                updateThemeIcon('light');
+            }
+            localStorage.setItem('theme', theme);
+            applyThemeStyles();
+        }
+
         // Theme toggle event listener
         if (themeToggle) {
             themeToggle.addEventListener('click', function() {
-                const isDarkTheme = document.body.classList.toggle('dark-theme');
-                const newTheme = isDarkTheme ? 'dark' : 'light';
-
-                localStorage.setItem('theme', newTheme);
-                updateThemeIcon(newTheme);
-                applyThemeStyles();
+                const isDark = document.body.classList.contains('dark-theme');
+                applyTheme(isDark ? 'light' : 'dark');
 
                 document.body.classList.add('theme-transition');
                 setTimeout(() => {
@@ -651,30 +792,29 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
         function updateThemeIcon(theme) {
             if (themeIcon) {
                 themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
-                themeToggle.title = theme === 'dark' ? 'تبديل إلى الوضع النهاري' : 'تبديل إلى الوضع الليلي';
+                if(themeToggle) themeToggle.title = theme === 'dark' ? 'تبديل إلى الوضع النهاري' : 'تبديل إلى الوضع الليلي';
             }
         }
 
         function applyThemeStyles() {
             const isDarkTheme = document.body.classList.contains('dark-theme');
-            const bgColor = currentConfig.background_color || defaultConfig.background_color;
-            const surfaceColor = currentConfig.surface_color || defaultConfig.surface_color;
-            const textColor = currentConfig.text_color || defaultConfig.text_color;
-
-            if (isDarkTheme) {
-                document.body.style.removeProperty('background');
-            } else {
-                document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${adjustColor(bgColor, 20)} 100%)`;
-            }
-
-            document.querySelectorAll('.page').forEach(page => {
-                if (isDarkTheme) {
-                    page.style.removeProperty('background');
-                    page.style.removeProperty('color');
+            // We rely more on CSS variables now, but if config overrides exist:
+            const bgColor = currentConfig.background_color !== defaultConfig.background_color ? currentConfig.background_color : null;
+            
+            if (bgColor) {
+                 if (isDarkTheme) {
+                    document.body.style.removeProperty('background');
                 } else {
-                    page.style.background = surfaceColor;
-                    page.style.color = textColor;
+                    document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${adjustColor(bgColor, 20)} 100%)`;
                 }
+            } else {
+                 document.body.style.removeProperty('background');
+            }
+           
+            // Reset Page styles to allow CSS to take over unless custom config is set
+            document.querySelectorAll('.page').forEach(page => {
+                 page.style.removeProperty('background');
+                 page.style.removeProperty('color');
             });
         }
 
@@ -685,6 +825,7 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
             }
 
             const welcomeTextEl = document.getElementById('welcomeText');
+
             if (welcomeTextEl) {
                 welcomeTextEl.textContent = currentConfig.welcome_text || defaultConfig.welcome_text;
             }
@@ -968,7 +1109,9 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
             
             const questionHeader = document.querySelector('.question-header');
             const showTextBtn = document.getElementById('showTextBtn');
-            const shouldShowReading = currentTest.level === 'ليلة لا تصدق' || currentTest.level === 'قطعة الصلصال الصغيرة' || currentTest.level === 'حلق أيها النسر حلق' || currentTest.level === 'سِرُّ السِّنِّ العِمْلَاقَةِ';
+            const isHardcodedPassage = ['ليلة لا تصدق', 'قطعة الصلصال الصغيرة', 'حلق أيها النسر حلق', 'سِرُّ السِّنِّ العِمْلَاقَةِ'].includes(currentTest.level);
+            const dynamicPassage = window.dynamicPassages ? window.dynamicPassages[currentTest.level] : null;
+            const shouldShowReading = isHardcodedPassage || !!dynamicPassage;
             let readingDiv = document.getElementById('readingPassage');
 
             if (shouldShowReading && questionHeader) {
@@ -992,7 +1135,9 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
                 }
 
                 let selectedPassage;
-                if (currentTest.level === 'ليلة لا تصدق') {
+                if (dynamicPassage) {
+                    selectedPassage = dynamicPassage;
+                } else if (currentTest.level === 'ليلة لا تصدق') {
                     selectedPassage = readingPassage;
                 } else if (currentTest.level === 'قطعة الصلصال الصغيرة') {
                     selectedPassage = readingPassage2;

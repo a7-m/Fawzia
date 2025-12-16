@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إنشاء اختبار جديد | Fawzia</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              cairo: ['Cairo', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .question-builder-card {
+        transition: all 0.3s ease;
+      }
+      .question-builder-card:hover {
+        border-color: #10b981;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+      .remove-btn {
+        color: #ef4444;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+      }
+      .remove-btn:hover {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen font-cairo bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-50 transition-colors duration-300">
+    <nav class="main-nav" aria-label="شريط التنقل">
+      <div class="nav-brand">
+        <a class="nav-logo" href="index.html">
+          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+          <span class="brand-text">اختبارات بيرلز</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">الرئيسية</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="dashboard.html">الملف الشخصي</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="admin.html">لوحة التحكم</a>
+        </li>
+      </ul>
+      <div class="theme-toggle-container">
+        <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        
+        <!-- View 1: Metadata Setup -->
+        <div id="setupView" class="page-view active">
+            <header class="mb-10 text-center">
+                <h1 class="text-3xl font-bold mb-2 text-emerald-600 dark:text-emerald-400">إعداد الاختبار</h1>
+                <p class="text-slate-600 dark:text-slate-400">الخطوة 1: البيانات الأساسية ونص القراءة</p>
+            </header>
+
+            <form id="setupForm" class="space-y-8">
+                <section class="bg-white dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group col-span-2">
+                            <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">عنوان الاختبار</label>
+                            <input type="text" id="testTitle" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-lg text-slate-900 dark:text-white" placeholder="مثال: رحلة إلى الفضاء">
+                        </div>
+
+                        <div class="form-group col-span-2">
+                            <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">نص القراءة</label>
+                            <textarea id="readingPassage" rows="12" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-slate-900 dark:text-white" placeholder="اكتب النص هنا..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">رابط صورة (اختياري)</label>
+                            <input type="url" id="passageImage" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-slate-900 dark:text-white">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">المدة (دقيقة)</label>
+                            <select id="testDuration" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-slate-900 dark:text-white">
+                                <option value="0">مفتوح</option>
+                                <option value="15">15</option>
+                                <option value="30">30</option>
+                                <option value="45">45</option>
+                                <option value="60">60</option>
+                            </select>
+                        </div>
+
+                         <div class="form-group">
+                            <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">المادة</label>
+                            <input type="text" id="subject" value="لغة عربية" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all text-slate-900 dark:text-white">
+                        </div>
+                        
+                         <div class="form-group">
+                            <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">النشر</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2"><input type="radio" name="publishStatus" value="public" checked> عام</label>
+                                <label class="flex items-center gap-2"><input type="radio" name="publishStatus" value="private"> خاص</label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="px-8 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all transform hover:scale-105">
+                        التالي: إضافة الأسئلة ⬅
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- View 2: Question Editor -->
+        <div id="editorView" class="page-view hidden">
+            <header class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800 dark:text-slate-200">بناء الأسئلة</h1>
+                    <p class="text-sm text-slate-500 dark:text-slate-400" id="editorSubtitle">السؤال 1</p>
+                </div>
+                <button type="button" id="backToSetupBtn" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">تعديل البيانات الأساسية</button>
+            </header>
+
+            <div class="question-container relative bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200 dark:border-slate-700 w-full">
+                
+                <div class="mb-6">
+                    <div class="flex items-center gap-4 mb-4">
+                         <div class="flex-grow">
+                             <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">نص السؤال</label>
+                             <input type="text" id="qTextInput" class="w-full text-lg font-bold bg-transparent border-b-2 border-slate-300 dark:border-slate-700 focus:border-emerald-500 outline-none py-2 transition-colors placeholder-slate-400 dark:placeholder-slate-600 text-slate-900 dark:text-white" placeholder="اكتب السؤال هنا..." required>
+                         </div>
+                         <div class="w-1/4 min-w-[150px]">
+                            <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">نوع السؤال</label>
+                            <select id="qTypeSelect" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-3 py-2 text-sm outline-none focus:border-emerald-500 text-slate-900 dark:text-white">
+                                <option value="multiple_choice">اختيار من متعدد</option>
+                                <option value="multiple_select">اختيار متعدد</option>
+                                <option value="essay">مقالي</option>
+                                <option value="dropdown">قائمة منسدلة</option>
+                                <option value="ordering">ترتيب</option>
+                                <option value="matching">توصيل</option>
+                                <option value="click_drag">نطاق رقمي</option>
+                            </select>
+                         </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">المستوى المعرفي</label>
+                        <input type="text" id="qLevelInput" class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-700 rounded px-3 py-1.5 text-sm outline-none focus:border-emerald-500 text-slate-900 dark:text-white" placeholder="مثال: استرجاع">
+                    </div>
+                </div>
+
+                <!-- Dynamic Content Area -->
+                <div id="qDynamicContent" class="min-h-[200px] border-t border-slate-200 dark:border-slate-700/50 pt-6">
+                    <!-- Specific inputs will be injected here -->
+                </div>
+
+            </div>
+
+             <!-- Navigation Footer -->
+            <div class="btn-group flex items-center justify-between mt-8">
+                <button type="button" id="prevQBtn" class="btn btn-secondary px-6 py-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300" disabled>السابق</button>
+                
+                <div class="flex gap-2">
+                    <button type="button" id="deleteQBtn" class="px-4 py-2 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">حذف السؤال</button>
+                    <button type="button" id="savePublishBtn" class="btn bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg">حفظ وإنهاء</button>
+                </div>
+
+                <button type="button" id="nextQBtn" class="btn bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg">التالي (سؤال جديد)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates for Questions (Hidden) -->
+    <template id="tpl-options-list">
+      <div class="space-y-2">
+        <label class="text-xs text-slate-500 dark:text-slate-400">الخيارات (حدد الإجابة الصحيحة)</label>
+        <div class="options-wrapper space-y-2">
+          <!-- Option Items -->
+        </div>
+        <button type="button" class="add-option-btn text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 flex items-center gap-1 mt-2">
+          <span>+</span> إضافة خيار
+        </button>
+      </div>
+    </template>
+
+    <template id="tpl-option-item">
+      <div class="flex items-center gap-2">
+        <input type="radio" name="g_rand" class="option-correct-radio cursor-pointer accent-emerald-500" />
+        <input type="text" class="option-text flex-grow bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-3 py-1.5 text-sm focus:border-emerald-500 outline-none text-slate-900 dark:text-white" placeholder="خيار الإجابة" required />
+        <button type="button" class="remove-option-btn text-slate-500 hover:text-red-400">✕</button>
+      </div>
+    </template>
+
+    <template id="tpl-essay">
+      <div>
+        <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">الإجابة النموذجية (للمعلم/التقييم الذاتي)</label>
+        <textarea class="q-model-answer w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded p-2 text-sm focus:border-emerald-500 outline-none text-slate-900 dark:text-white" rows="2" placeholder="أدخل الإجابة النموذجية..."></textarea>
+      </div>
+    </template>
+
+    <template id="tpl-ordering">
+      <div class="space-y-2">
+        <label class="text-xs text-slate-500 dark:text-slate-400">العناصر (أدخلها بالترتيب الصحيح)</label>
+        <div class="items-wrapper space-y-2">
+           <!-- Items via JS -->
+        </div>
+        <button type="button" class="add-order-item-btn text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 flex items-center gap-1 mt-2">
+          <span>+</span> إضافة عنصر للترتيب
+        </button>
+      </div>
+    </template>
+
+    <template id="tpl-matching">
+      <div class="space-y-2">
+        <label class="text-xs text-slate-500 dark:text-slate-400">الأزواج المتطابقة</label>
+        <div class="pairs-wrapper space-y-2">
+           <!-- Items via JS -->
+        </div>
+        <button type="button" class="add-pair-btn text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 flex items-center gap-1 mt-2">
+          <span>+</span> إضافة زوج جديد
+        </button>
+      </div>
+    </template>
+
+    <template id="tpl-click-drag">
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">أقل قيمة</label>
+          <input type="number" class="range-min w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded p-2 text-sm focus:border-emerald-500 outline-none text-slate-900 dark:text-white" value="1" required />
+        </div>
+        <div>
+          <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">أعلى قيمة</label>
+          <input type="number" class="range-max w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded p-2 text-sm focus:border-emerald-500 outline-none text-slate-900 dark:text-white" value="10" required />
+        </div>
+        <div>
+          <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">الإجابة الصحيحة</label>
+          <input type="number" class="range-correct w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded p-2 text-sm focus:border-emerald-500 outline-none text-slate-900 dark:text-white" required />
+        </div>
+      </div>
+    </template>
+
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="teacher.js"></script>
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
