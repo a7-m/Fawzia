@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إنشاء حساب | مدرسة Fawzia</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+  </head>
+  <body class="min-h-screen flex flex-col bg-[--background] text-[--text]">
+    <nav class="main-nav" aria-label="شريط التنقل">
+      <div class="nav-brand">
+        <a class="nav-logo" href="../index.html">
+          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+          <span class="brand-text">اختبارات بيرلز</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item">
+          <a class="nav-link" href="../index.html">الرئيسية</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../auth/login.html" id="profileLink"
+            >الملف الشخصي</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../auth/login.html">تسجيل الدخول</a>
+        </li>
+      </ul>
+      <div class="theme-toggle-container">
+        <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+    </nav>
+    <main class="flex-1 flex items-center justify-center p-6">
+      <section
+        class="w-full max-w-md bg-[--surface] shadow-lg rounded-2xl p-8 mx-4"
+      >
+        <h1 class="text-2xl font-bold mb-6 text-center">إنشاء حساب جديد</h1>
+        <form id="signupForm" class="space-y-4">
+          <!-- Role Selection -->
+          <div class="flex flex-col gap-2">
+            <label for="role" class="font-semibold">نوع الحساب</label>
+            <select
+              id="role"
+              class="form-group input bg-white dark:bg-slate-800"
+            >
+              <option value="student">طالب</option>
+              <option value="teacher">معلم</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="studentName" class="font-semibold">الاسم الكامل</label>
+            <input
+              id="studentName"
+              type="text"
+              required
+              placeholder="اسمك الكامل"
+              class="form-group input"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="signupEmail" class="font-semibold"
+              >البريد الإلكتروني</label
+            >
+            <input
+              id="signupEmail"
+              type="email"
+              required
+              placeholder="example@email.com"
+              class="form-group input"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="signupPassword" class="font-semibold"
+              >كلمة المرور</label
+            >
+            <input
+              id="signupPassword"
+              type="password"
+              required
+              minlength="6"
+              placeholder="••••••••"
+              class="form-group input"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="confirmPassword" class="font-semibold"
+              >تأكيد كلمة المرور</label
+            >
+            <input
+              id="confirmPassword"
+              type="password"
+              required
+              minlength="6"
+              placeholder="••••••••"
+              class="form-group input"
+            />
+          </div>
+
+          <!-- Student Only Fields -->
+          <div id="studentFields" class="space-y-4">
+            <div class="flex flex-col gap-2">
+              <label for="studentClass" class="font-semibold">الصف</label>
+              <select id="studentClass" class="form-group input bg-white"></select>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="studentNumber" class="font-semibold"
+                >رقم الطالب</label
+              >
+              <input
+                id="studentNumber"
+                type="text"
+                placeholder="مثلاً: 12345"
+                class="form-group input"
+              />
+            </div>
+          </div>
+
+          <button type="submit" class="btn w-full">إنشاء الحساب</button>
+        </form>
+        <div class="text-center mt-6">
+          <p class="text-sm">
+            لديك حساب بالفعل؟
+            <a href="./login.html" class="text-[--primary] hover:underline"
+              >تسجيل الدخول</a
+            >
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Specific Scripts -->
+    <script type="module" src="../js/signup.js"></script>
+    <script type="module" src="../js/script.js"></script>
+  </body>
+</html>

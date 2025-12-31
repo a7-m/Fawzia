@@ -1,123 +1,0 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>لوحة تحكم المشرف | Fawzia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body class="min-h-screen transition-colors duration-300">
-    <!-- Navbar -->
-    <nav class="main-nav" aria-label="شريط التنقل">
-      <div class="nav-brand">
-        <a class="nav-logo" href="index.html">
-          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
-          <span class="brand-text">اختبارات بيرلز</span>
-        </a>
-      </div>
-      <ul class="nav-links">
-        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
-        <li class="nav-item"><a class="nav-link" href="admin.html" id="profileLink">الملف الشخصي</a></li>
-        <li class="nav-item"><a class="nav-link" href="login.html">تسجيل الدخول</a></li>
-      </ul>
-      <div class="theme-toggle-container">
-        <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم"><span class="theme-icon">🌙</span></button>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 py-8">
-      <div class="page active">
-        <header class="flex items-center justify-between mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
-          <div>
-            <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">لوحة تحكم المشرف</h1>
-            <p class="text-slate-600 dark:text-slate-400">إدارة المستخدمين و أدوارهم</p>
-          </div>
-          <div class="flex gap-3">
-            <a href="teacher.html" class="px-6 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-              + إنشاء اختبار جديد
-            </a>
-            <button id="logoutBtn" class="text-red-500 hover:text-red-600 dark:text-red-400 font-medium px-4 py-2 transition-colors">تسجيل الخروج</button>
-          </div>
-        </header>
-
-        <section class="mb-8">
-          <div class="info-card flex items-center justify-between">
-            <div>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">حساب مشرف</p>
-              <h2 id="adminName" class="text-2xl font-bold text-slate-800 dark:text-white">...</h2>
-              <p id="adminEmail" class="text-slate-600 dark:text-slate-400 mt-1">...</p>
-            </div>
-            <span class="inline-flex px-4 py-2 rounded-full text-sm font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-              Admin Access
-            </span>
-          </div>
-        </section>
-
-        <div id="adminAlertBox" class="hidden mb-6 p-4 rounded-xl text-center font-medium transition-all"></div>
-
-        <!-- Users Table -->
-        <section class="mb-10">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white">جميع المستخدمين</h3>
-            <span class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">إدارة الصلاحيات</span>
-          </div>
-          
-          <div class="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <div class="overflow-x-auto">
-              <!-- Removed specific Tailwind Colors from Table Headers to let style.css handle it -->
-              <table class="w-full text-sm text-right">
-                <thead>
-                  <tr>
-                    <th class="px-6 py-4">الاسم</th>
-                    <th class="px-6 py-4">البريد الإلكتروني</th>
-                    <th class="px-6 py-4">الدور الحالي</th>
-                    <th class="px-6 py-4">تغيير الدور</th>
-                  </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                  <!-- Rows -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- Results Table -->
-        <section>
-           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white">نتائج الطلاب</h3>
-            <span class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">السجل الكامل</span>
-          </div>
-          
-          <div class="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <div class="overflow-x-auto">
-              <table class="w-full text-sm text-right">
-                <thead>
-                  <tr>
-                    <th class="px-6 py-4">الطالب</th>
-                    <th class="px-6 py-4">الصف</th>
-                    <th class="px-6 py-4">الرقم</th>
-                    <th class="px-6 py-4">المادة</th>
-                    <th class="px-6 py-4">الفقرة</th>
-                    <th class="px-6 py-4">النتيجة</th>
-                    <th class="px-6 py-4">التاريخ</th>
-                  </tr>
-                </thead>
-                <tbody id="resultsTableBody">
-                   <!-- Rows -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-
-    <script type="module" src="firebase.js"></script>
-    <script type="module" src="admin.js"></script>
-    <script type="module" src="script.js"></script>
-  </body>
-</html>

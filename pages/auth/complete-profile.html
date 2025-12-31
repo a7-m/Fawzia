@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إكمال الملف الشخصي | مدرسة Fawzia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/style.css" />
+    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+  </head>
+  <body class="min-h-screen flex flex-col bg-[--background] text-[--text]">
+    <nav class="main-nav" aria-label="شريط التنقل">
+      <div class="nav-brand">
+        <a class="nav-logo" href="../../index.html">
+          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+          <span class="brand-text">اختبارات بيرلز</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item"><a class="nav-link" href="../../index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="./login.html">تسجيل الدخول</a></li>
+      </ul>
+      <div class="theme-toggle-container">
+        <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم"><span class="theme-icon">🌙</span></button>
+      </div>
+    </nav>
+
+    <main class="flex-1 flex items-center justify-center p-6">
+      <section class="w-full max-w-2xl bg-[--surface] shadow-lg rounded-2xl p-8 mx-4">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <p class="text-sm text-slate-500">خطوة ضرورية</p>
+            <h1 class="text-2xl font-bold">إكمال بيانات الملف الشخصي</h1>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs bg-amber-100 text-amber-700 border border-amber-200">
+            مطلوب للدخول
+          </span>
+        </div>
+
+        <div id="statusMessage" class="hidden mb-4 px-4 py-3 rounded-xl text-sm font-semibold"></div>
+
+        <form id="profileForm" class="space-y-6">
+          <div class="grid gap-4">
+            <div class="flex flex-col gap-2">
+              <label class="font-semibold" for="roleInput">الدور</label>
+              <select id="roleInput" class="input form-group bg-white">
+                <option value="student">طالب</option>
+                <option value="teacher">معلم</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label for="fullName" class="font-semibold">الاسم الكامل</label>
+              <input id="fullName" type="text" required placeholder="الاسم" class="form-group input" />
+            </div>
+
+            <div id="studentSection" class="hidden grid gap-3">
+              <label class="font-semibold">اختيار الصف</label>
+              <select id="studentClassSelect" class="input form-group"></select>
+              <p class="text-xs text-slate-500">يُسمح للطالب بالانتماء إلى صف واحد فقط.</p>
+            </div>
+
+            <div id="teacherSection" class="hidden grid gap-3">
+              <label class="font-semibold">الصفوف التي أُدرّسها</label>
+              <select id="teacherClassesSelect" class="input form-group" multiple size="6"></select>
+              <p class="text-xs text-slate-500">يمكن اختيار أكثر من صف. تُستخدم هذه البيانات لعرض الطلاب والنتائج.</p>
+            </div>
+          </div>
+
+          <button
+            id="submitProfile"
+            type="submit"
+            class="btn w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled
+          >
+            حفظ ومتابعة
+          </button>
+        </form>
+
+        <p class="text-xs text-slate-500 mt-4">
+          هذه الخطوة مطلوبة لضمان ظهور بياناتك بشكل صحيح في النظام. جميع البيانات تُحفظ مباشرةً في قاعدة البيانات عبر Supabase مع احترام سياسات RLS.
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="../../js/auth/complete-profile.js"></script>
+    <script type="module" src="../../js/script.js"></script>
+  </body>
+</html>

@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>نسيت كلمة السر | مدرسة Fawzia</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../css/style.css" />
     <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
   </head>
   <body class="min-h-screen flex flex-col bg-[--background] text-[--text]">
     <nav class="main-nav" aria-label="شريط التنقل">
       <div class="nav-brand">
-        <a class="nav-logo" href="index.html">
+        <a class="nav-logo" href="../index.html">
           <span class="brand-mark" aria-hidden="true">﴾﴿</span>
           <span class="brand-text">اختبارات بيرلز</span>
         </a>
       </div>
       <ul class="nav-links">
-        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
-        <li class="nav-item"><a class="nav-link" href="dashboard.html" id="profileLink">الملف الشخصي</a></li>
-        <li class="nav-item"><a class="nav-link" href="login.html">تسجيل الدخول</a></li>
+        <li class="nav-item"><a class="nav-link" href="../index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="../auth/login.html" id="profileLink">الملف الشخصي</a></li>
+        <li class="nav-item"><a class="nav-link" href="../auth/login.html">تسجيل الدخول</a></li>
       </ul>
       <div class="theme-toggle-container">
         <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم"><span class="theme-icon">🌙</span></button>
@@ -36,11 +36,11 @@
           <button type="submit" class="btn w-full">إرسال رابط إعادة التعيين</button>
         </form>
         <div class="text-center mt-6">
-          <a href="login.html" class="text-sm text-[--primary] hover:underline">العودة إلى تسجيل الدخول</a>
+          <a href="./login.html" class="text-sm text-[--primary] hover:underline">العودة إلى تسجيل الدخول</a>
         </div>
       </section>
     </main>
-    <script type="module" src="auth.js"></script>
-    <script type="module" src="script.js"></script>
+    <script type="module" src="../js/auth.js"></script>
+    <script type="module" src="../js/script.js"></script>
   </body>
 </html>

@@ -5,32 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>تسجيل الدخول | مدرسة Fawzia</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
     <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
   </head>
   <body class="min-h-screen flex flex-col bg-[--background] text-[--text]">
-    <!-- Navbar -->
     <nav class="main-nav" aria-label="شريط التنقل">
       <div class="nav-brand">
-        <a class="nav-logo" href="index.html">
+        <a class="nav-logo" href="../../index.html">
           <span class="brand-mark" aria-hidden="true">﴾﴿</span>
           <span class="brand-text">اختبارات بيرلز</span>
         </a>
       </div>
       <ul class="nav-links">
-        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
-        <li class="nav-item"><a class="nav-link" href="dashboard.html" id="profileLink">الملف الشخصي</a></li>
-        <li class="nav-item"><a class="nav-link" href="login.html">تسجيل الدخول</a></li>
+        <li class="nav-item"><a class="nav-link" href="../../index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" id="profileLink" href="./login.html">الملف الشخصي</a></li>
+        <li class="nav-item"><a class="nav-link" href="./login.html">تسجيل الدخول</a></li>
       </ul>
       <div class="theme-toggle-container">
         <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم"><span class="theme-icon">🌙</span></button>
       </div>
     </nav>
 
-    <!-- Page Content -->
     <main class="flex-1 flex items-center justify-center p-6">
       <section class="w-full max-w-md bg-[--surface] shadow-lg rounded-2xl p-8 mx-4">
         <h1 class="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h1>
+        <div id="statusMessage" class="hidden mb-4 px-4 py-3 rounded-xl text-sm font-semibold"></div>
         <form id="loginForm" class="space-y-4">
           <div class="flex flex-col gap-2">
             <label for="loginEmail" class="font-semibold">البريد الإلكتروني</label>
@@ -54,15 +53,17 @@
         </button>
 
         <div class="text-center mt-6 space-y-2">
-          <a href="forgot.html" class="text-sm text-[--primary] hover:underline">نسيت كلمة السر؟</a>
+          <a href="../forgot.html" class="text-sm text-[--primary] hover:underline">نسيت كلمة السر؟</a>
+        </div>
+        <div class="text-center mt-6 space-y-2">
           <p class="text-sm">ليس لديك حساب؟
-            <a href="signup.html" class="text-[--primary] hover:underline">إنشاء حساب</a>
+            <a href="../signup.html" class="text-[--primary] hover:underline">إنشاء حساب</a>
           </p>
         </div>
       </section>
     </main>
 
-    <script type="module" src="auth.js"></script>
-    <script type="module" src="script.js"></script>
+    <script type="module" src="../../js/auth/login.js"></script>
+    <script type="module" src="../../js/script.js"></script>
   </body>
 </html>
