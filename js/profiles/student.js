@@ -21,7 +21,7 @@ function renderClassInfo(cls) {
 async function loadProfile(uid) {
   const { data, error } = await supabase
     .from("profiles")
-    .select("full_name, class_id, classes:class_id(id, name, grade)")
+    .select("full_name, class_id, classes!profiles_class_id_fkey(id, name, grade)")
     .eq("id", uid)
     .maybeSingle();
   if (error) throw error;

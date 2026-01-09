@@ -30,7 +30,7 @@ function classLabel(cls) {
 async function loadClasses() {
   const { data, error } = await supabase
     .from("classes")
-    .select("id, name, grade, created_at, created_by")
+    .select("id, name, grade, created_at")
     .order("created_at", { ascending: false });
   if (error) throw error;
   classesCache = data || [];
@@ -111,21 +111,35 @@ function renderUsers() {
     const cls = classesCache.find((c) => c.id === u.class_id);
     tr.innerHTML = `
       <td class="px-3 py-2">
-        <input data-field="full_name" class="w-full border rounded px-2 py-1 text-sm" value="${u.full_name || ""}" placeholder="الاسم" />
+        <input data-field="full_name" class="w-full border rounded px-2 py-1 text-sm" value="${
+          u.full_name || ""
+        }" placeholder="الاسم" />
       </td>
       <td class="px-3 py-2 text-slate-600">${u.email || "-"}</td>
       <td class="px-3 py-2">
         <select data-field="role" class="border rounded px-2 py-1 text-sm bg-white">
           ${roleOptions
-            .map((r) => `<option value="${r}" ${u.role === r ? "selected" : ""}>${r}</option>`)
+            .map(
+              (r) =>
+                `<option value="${r}" ${
+                  u.role === r ? "selected" : ""
+                }>${r}</option>`
+            )
             .join("")}
         </select>
       </td>
       <td class="px-3 py-2">
-        <select data-field="class_id" class="border rounded px-2 py-1 text-sm bg-white" ${u.role === "student" ? "" : "disabled"}>
+        <select data-field="class_id" class="border rounded px-2 py-1 text-sm bg-white" ${
+          u.role === "student" ? "" : "disabled"
+        }>
           <option value="">—</option>
           ${classesCache
-            .map((c) => `<option value="${c.id}" ${u.class_id === c.id ? "selected" : ""}>${classLabel(c)}</option>`)
+            .map(
+              (c) =>
+                `<option value="${c.id}" ${
+                  u.class_id === c.id ? "selected" : ""
+                }>${classLabel(c)}</option>`
+            )
             .join("")}
         </select>
       </td>
@@ -147,7 +161,10 @@ async function saveUser(row) {
   });
   const role = payload.role || "student";
 
-  const { error } = await supabase.from("profiles").update(payload).eq("id", uid);
+  const { error } = await supabase
+    .from("profiles")
+    .update(payload)
+    .eq("id", uid);
   if (error) throw error;
 
   // Maintain student_classes
@@ -193,7 +210,9 @@ async function loadTeacherClassLinks() {
   linksTbody.innerHTML = "";
   const { data, error } = await supabase
     .from("teacher_classes")
-    .select("teacher_id, class_id, classes(id, name, grade), teacher:teacher_id (full_name,email)")
+    .select(
+      "teacher_id, class_id, classes(id, name, grade), teacher:teacher_id (full_name,email)"
+    )
     .order("class_id", { ascending: true });
   if (error) throw error;
 
@@ -204,7 +223,9 @@ async function loadTeacherClassLinks() {
     tr.dataset.teacherId = row.teacher_id;
     tr.dataset.classId = row.class_id;
     tr.innerHTML = `
-      <td class="px-3 py-2">${row.teacher?.full_name || row.teacher?.email || "-"}</td>
+      <td class="px-3 py-2">${
+        row.teacher?.full_name || row.teacher?.email || "-"
+      }</td>
       <td class="px-3 py-2">${classLabel(row.classes)}</td>
       <td class="px-3 py-2">
         <button class="remove-link btn btn-sm btn-ghost" type="button">حذف</button>
@@ -215,10 +236,15 @@ async function loadTeacherClassLinks() {
 }
 
 async function saveTeacherClasses(teacherId) {
-  const selected = Array.from(classesMulti?.selectedOptions || []).map((o) => o.value);
+  const selected = Array.from(classesMulti?.selectedOptions || []).map(
+    (o) => o.value
+  );
   await supabase.from("teacher_classes").delete().eq("teacher_id", teacherId);
   if (selected.length) {
-    const rows = selected.map((class_id) => ({ teacher_id: teacherId, class_id }));
+    const rows = selected.map((class_id) => ({
+      teacher_id: teacherId,
+      class_id,
+    }));
     const { error } = await supabase.from("teacher_classes").insert(rows);
     if (error) throw error;
   }
@@ -229,7 +255,9 @@ async function loadResults() {
   resultsTbody.innerHTML = "";
   const { data, error } = await supabase
     .from("attempts")
-    .select("user_id, subject, level, score_percentage, created_at, profile:profiles(id, full_name, class_id, classes:class_id(id, name, grade))")
+    .select(
+      "user_id, subject, level, score_percentage, created_at, profile:profiles(id, full_name, class_id, classes!profiles_class_id_fkey(id, name, grade))"
+    )
     .order("created_at", { ascending: false });
   if (error) throw error;
   toggle(resultsEmpty, !data || data.length === 0);
@@ -241,8 +269,12 @@ async function loadResults() {
       <td class="px-3 py-2">${a.profile?.full_name || `محاولة ${idx + 1}`}</td>
       <td class="px-3 py-2">${classLabel(cls)}</td>
       <td class="px-3 py-2">${a.subject || "-"}</td>
-      <td class="px-3 py-2">${typeof a.score_percentage === "number" ? a.score_percentage + "%" : "-"}</td>
-      <td class="px-3 py-2">${a.created_at ? new Date(a.created_at).toLocaleString("ar-EG") : "-"}</td>
+      <td class="px-3 py-2">${
+        typeof a.score_percentage === "number" ? a.score_percentage + "%" : "-"
+      }</td>
+      <td class="px-3 py-2">${
+        a.created_at ? new Date(a.created_at).toLocaleString("ar-EG") : "-"
+      }</td>
     `;
     resultsTbody.appendChild(tr);
   });
@@ -252,7 +284,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const user = await checkAuth({ protected: true, adminOnly: true });
   if (!user) return;
 
-  document.getElementById("adminName").textContent = user.name || user.email || "مشرف";
+  document.getElementById("adminName").textContent =
+    user.name || user.email || "مشرف";
   document.getElementById("adminEmail").textContent = user.email || "";
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) logoutBtn.addEventListener("click", () => signOut());
@@ -346,7 +379,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!teacherId || !classId) return;
       try {
         hideStatus(statusEl);
-        await supabase.from("teacher_classes").delete().eq("teacher_id", teacherId).eq("class_id", classId);
+        await supabase
+          .from("teacher_classes")
+          .delete()
+          .eq("teacher_id", teacherId)
+          .eq("class_id", classId);
         await loadTeacherClassLinks();
         setStatus(statusEl, "تم حذف الرابط", "success");
       } catch (err) {

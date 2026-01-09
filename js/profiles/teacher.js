@@ -44,7 +44,7 @@ async function loadStudents() {
   const classIds = teacherClasses.map((c) => c.id);
   const { data, error } = await supabase
     .from("student_classes")
-    .select("student:student_id(id, full_name, email, class_id, classes:class_id(id, name, grade))")
+    .select("student:student_id(id, full_name, email, class_id, classes!profiles_class_id_fkey(id, name, grade))")
     .in("class_id", classIds);
   if (error) throw error;
   studentsCache = (data || []).map((r) => r.student).filter(Boolean);
@@ -77,7 +77,7 @@ async function loadResults() {
   }
   const { data, error } = await supabase
     .from("attempts")
-    .select("user_id, subject, level, score_percentage, created_at, profile:profiles(id, full_name, class_id, classes:class_id(id, name, grade))")
+    .select("user_id, subject, level, score_percentage, created_at, profile:profiles(id, full_name, class_id, classes!profiles_class_id_fkey(id, name, grade))")
     .in("user_id", studentIds)
     .order("created_at", { ascending: false });
   if (error) throw error;
