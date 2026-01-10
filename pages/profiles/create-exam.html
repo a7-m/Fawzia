@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء اختبار جديد | Fawzia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .step-card { transition: all 0.3s ease; }
+        .step-card.active { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-[Cairo]">
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="../../index.html" class="flex items-center gap-2 text-emerald-600 font-bold text-xl">
+                        <span>﴾﴿</span>
+                        <span>اختبارات بيرلز</span>
+                    </a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="teacher.html" class="text-slate-600 hover:text-emerald-600 text-sm font-semibold">لوحة التحكم</a>
+                    <button onclick="history.back()" class="btn-ghost text-sm">عودة</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">منشئ الاختبارات</h1>
+            <p class="text-slate-500">قم بإنشاء اختبار جديد وتخصيص الأسئلة للطلاب</p>
+        </header>
+
+        <!-- Steps Indicator -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div data-step="1" class="step-card active border-b-4 border-emerald-500 pb-3 text-center cursor-default">
+                <span class="block text-lg font-bold text-emerald-600">1</span>
+                <span class="text-sm font-semibold text-slate-700">بيانات الاختبار</span>
+            </div>
+            <div data-step="2" class="step-card border-b-4 border-slate-200 pb-3 text-center cursor-default">
+                <span class="block text-lg font-bold text-slate-400">2</span>
+                <span class="text-sm font-semibold text-slate-500">النص والمحتوى</span>
+            </div>
+            <div data-step="3" class="step-card border-b-4 border-slate-200 pb-3 text-center cursor-default">
+                <span class="block text-lg font-bold text-slate-400">3</span>
+                <span class="text-sm font-semibold text-slate-500">الأسئلة</span>
+            </div>
+            <div data-step="4" class="step-card border-b-4 border-slate-200 pb-3 text-center cursor-default">
+                <span class="block text-lg font-bold text-slate-400">4</span>
+                <span class="text-sm font-semibold text-slate-500">المراجعة والنشر</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 min-h-[600px]">
+            
+            <!-- STEP 1: Metadata -->
+            <div data-step-panel="1" class="space-y-6">
+                <form id="setupForm" class="max-w-2xl mx-auto space-y-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-slate-700">عنوان الاختبار <span class="text-red-500">*</span></label>
+                        <input type="text" id="testTitle" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition" placeholder="مثلاً: اختبار القراءة - الوحدة الأولى" required>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700">المادة</label>
+                            <select id="subject" class="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white focus:border-emerald-500 outline-none">
+                                <option value="لغة عربية">لغة عربية</option>
+                                <option value="لغة إنجليزية">لغة إنجليزية</option>
+                                <option value="رياضيات">رياضيات</option>
+                                <option value="علوم">علوم</option>
+                                <option value="دراسات إسلامية">دراسات إسلامية</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700">مدة الاختبار (دقيقة)</label>
+                            <input type="number" id="testDuration" value="30" min="5" max="180" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none transition">
+                            <p class="text-xs text-slate-500">اتركه 0 إذا كان مفتوح الوقت</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="block text-sm font-bold text-slate-700">حالة النشر</label>
+                        <div class="flex items-center gap-6">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="publishStatus" value="public" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-sm font-medium">عام (متاح لجميع الطلاب)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="publishStatus" value="private" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-sm font-medium">خاص (مسودة)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-100 flex justify-end">
+                        <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg shadow-emerald-200">
+                            التالي: المحتوى
+                        </button>
+                    </div>
+                </form>
+                <div id="metaError" class="text-center text-red-500 text-sm font-bold mt-4"></div>
+            </div>
+
+            <!-- STEP 2: Passage -->
+            <div data-step-panel="2" class="hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
+                    <div class="lg:col-span-2 space-y-4">
+                        <label class="block text-sm font-bold text-slate-700">نص القراءة <span class="text-red-500">*</span></label>
+                        <textarea id="readingPassage" class="w-full h-[400px] p-4 rounded-xl border border-slate-300 focus:border-emerald-500 outline-none resize-none leading-relaxed text-lg" placeholder="ضع النص هنا..."></textarea>
+                        <p class="text-xs text-slate-500">يمكنك تنسيق النص باستخدام مسافات وأسطر جديدة.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <label class="block text-sm font-bold text-slate-700">صورة مرفقة (اختياري)</label>
+                        <input type="url" id="passageImage" class="w-full px-4 py-3 rounded-lg border border-slate-300 text-sm" placeholder="رابط صورة مباشر (https://...)">
+                        
+                        <div class="bg-slate-100 rounded-xl p-4 min-h-[200px] flex items-center justify-center border border-dashed border-slate-300 text-slate-400">
+                            معاينة الصورة
+                        </div>
+                    </div>
+                </div>
+
+                <div id="passageError" class="text-center text-red-500 text-sm font-bold"></div>
+
+                <div class="flex justify-between pt-6 border-t border-slate-100">
+                    <button id="backToMetaBtn" class="btn-ghost px-6 text-slate-600">السابق</button>
+                    <button id="toQuestionsBtn" class="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg shadow-emerald-200">
+                        التالي: الأسئلة
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Questions -->
+            <div data-step-panel="3" class="hidden h-full flex flex-col">
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Sidebar: Questions List -->
+                    <div class="lg:col-span-3 border-l border-slate-100 pl-4 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-700">قائمة الأسئلة</h3>
+                            <button id="addQuestionBtn" class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg" title="سؤال جديد">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="questionList" class="flex-1 overflow-y-auto space-y-2 pr-2 max-h-[600px] custom-scrollbar">
+                            <!-- Questions items injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Editor Area -->
+                    <div class="lg:col-span-9 space-y-6">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-800">محرر الأسئلة</h2>
+                                <p id="editorSubtitle" class="text-sm text-slate-500">السؤال 1</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="duplicateQBtn" class="btn-sm bg-slate-100 text-slate-700 hover:bg-slate-200">تكرار</button>
+                                <button id="deleteQBtn" class="btn-sm bg-red-50 text-red-600 hover:bg-red-100">حذف</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Configuration -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase">نص السؤال</label>
+                                    <textarea id="qTextInput" class="w-full mt-1 p-3 rounded-lg border border-slate-300 outline-none focus:border-emerald-500 h-24" placeholder="اكتب السؤال هنا..."></textarea>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 uppercase">نوع السؤال</label>
+                                        <select id="qTypeSelect" class="w-full mt-1 p-2 rounded-lg border border-slate-300 bg-white">
+                                            <option value="multiple_choice">اختيار من متعدد</option>
+                                            <option value="multiple_select">اختيار متعدد</option>
+                                            <option value="essay">سؤال مقالي</option>
+                                            <option value="dropdown">قائمة منسدلة</option>
+                                            <option value="ordering">ترتيب</option>
+                                            <option value="matching">توصيل (مطابقة)</option>
+                                            <option value="click_drag">تحديد قيمة (نطاق)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 uppercase">المستوى المعرفي</label>
+                                        <input type="text" id="qLevelInput" class="w-full mt-1 p-2 rounded-lg border border-slate-300" placeholder="مثلاً: استرجاع، تطبيق">
+                                    </div>
+                                </div>
+                                
+                                <div id="qDynamicContent" class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                                    <!-- Dynamic Inputs based on type -->
+                                </div>
+                            </div>
+
+                            <!-- Live Preview -->
+                            <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 flex flex-col">
+                                <label class="text-xs font-bold text-slate-400 uppercase mb-4">معاينة الطالب</label>
+                                <div id="previewArea" class="flex-1 bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
+                                    <!-- Preview rendered here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-6">
+                            <button id="prevQBtn" class="btn-secondary" disabled>السابق</button>
+                            <button id="nextQBtn" class="btn-primary">التالي / جديد</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="questionError" class="text-center text-red-500 text-sm font-bold mt-4"></div>
+
+                <div class="flex justify-between pt-6 border-t border-slate-100 mt-6">
+                    <button id="backToPassageBtn" class="btn-ghost px-6 text-slate-600">السابق</button>
+                    <button id="toReviewBtn" class="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg shadow-emerald-200">
+                        مراجعة نهائية
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Review -->
+            <div data-step-panel="4" class="hidden max-w-2xl mx-auto space-y-8">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">جاهز للنشر!</h2>
+                    <p class="text-slate-500 mt-2">يرجى مراجعة تفاصيل الاختبار قبل الحفظ النهائي.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-6 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-slate-700 border-b border-slate-200 pb-2 mb-2">البيانات الأساسية</h3>
+                        <ul id="reviewMeta" class="list-disc list-inside text-sm text-slate-600 space-y-1"></ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-700 border-b border-slate-200 pb-2 mb-2">المحتوى</h3>
+                        <ul id="reviewQuestions" class="list-disc list-inside text-sm text-slate-600 space-y-1"></ul>
+                    </div>
+                </div>
+
+                <div id="reviewError" class="text-center text-red-500 text-sm font-bold"></div>
+
+                <div class="flex justify-between pt-6 gap-4">
+                    <button id="backToQuestionsBtn" class="btn-ghost px-6 text-slate-600">تعديل المحتوى</button>
+                    <button id="savePublishBtn" class="flex-1 btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-bold transition shadow-lg shadow-emerald-200 text-lg">
+                        نشر الاختبار
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Templates -->
+    <template id="tpl-options-list">
+        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">الخيارات</label>
+        <div class="space-y-2 options-wrapper"></div>
+        <button type="button" class="add-option-btn text-sm text-emerald-600 font-semibold mt-3 hover:underline">+ إضافة خيار</button>
+    </template>
+
+    <template id="tpl-option-item">
+        <div class="flex items-center gap-2">
+            <input type="radio" class="option-correct-radio w-4 h-4 text-emerald-600 focus:ring-emerald-500" title="حدد كإجابة صحيحة">
+            <input type="text" class="option-text flex-1 p-2 rounded border border-slate-300 text-sm" placeholder="نص الخيار">
+            <button type="button" class="remove-option-btn text-slate-400 hover:text-red-500 px-1">✕</button>
+        </div>
+    </template>
+
+    <template id="tpl-essay">
+        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">نموذج الإجابة (للمعلم فقط)</label>
+        <textarea class="q-model-answer w-full p-2 rounded border border-slate-300 text-sm h-32" placeholder="اكتب الإجابة النموذجية هنا..."></textarea>
+    </template>
+
+    <template id="tpl-ordering">
+        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">عناصر الترتيب (بالترتيب الصحيح)</label>
+        <div class="space-y-2 items-wrapper"></div>
+        <button type="button" class="add-order-item-btn text-sm text-emerald-600 font-semibold mt-3 hover:underline">+ إضافة عنصر</button>
+    </template>
+
+    <template id="tpl-matching">
+        <label class="text-xs font-bold text-slate-500 uppercase block mb-2">أزواج المطابقة</label>
+        <div class="space-y-2 pairs-wrapper"></div>
+        <button type="button" class="add-pair-btn text-sm text-emerald-600 font-semibold mt-3 hover:underline">+ إضافة زوج</button>
+    </template>
+
+    <template id="tpl-click-drag">
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="text-xs font-bold text-slate-500 uppercase block mb-1">أدنى قيمة</label>
+                <input type="number" class="range-min w-full p-2 rounded border border-slate-300 text-sm" value="0">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-slate-500 uppercase block mb-1">أقصى قيمة</label>
+                <input type="number" class="range-max w-full p-2 rounded border border-slate-300 text-sm" value="10">
+            </div>
+            <div class="col-span-2">
+                <label class="text-xs font-bold text-slate-500 uppercase block mb-1">الإجابة الصحيحة</label>
+                <input type="number" class="range-correct w-full p-2 rounded border border-slate-300 text-sm">
+            </div>
+        </div>
+    </template>
+
+    <script type="module" src="../../js/teacher.js"></script>
+    <script type="module" src="../../js/script.js"></script>
+</body>
+</html>

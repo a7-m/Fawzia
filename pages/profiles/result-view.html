@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل النتيجة | Fawzia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .review-item { border: 1px solid #e2e8f0; margin-bottom: 1rem; padding: 1rem; border-radius: 0.5rem; background-color: white; }
+        .review-item.correct { border-color: #a7f3d0; background-color: #ecfdf5; }
+        .review-item.incorrect { border-color: #fecaca; background-color: #fef2f2; }
+        .review-question { font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; }
+        .review-answer { font-size: 0.875rem; margin-bottom: 0.25rem; }
+        .user-answer { font-weight: 600; }
+        .correct-answer { color: #059669; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-[Cairo]">
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 print:hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="../../index.html" class="flex items-center gap-2 text-emerald-600 font-bold text-xl">
+                        <span>﴾﴿</span>
+                        <span>اختبارات بيرلز</span>
+                    </a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="history.back()" class="btn-ghost text-sm">عودة</button>
+                    <a href="../../index.html" class="btn-ghost text-sm">الرئيسية</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 space-y-6 print:py-0">
+        
+        <div id="statusMessage" class="hidden"></div>
+
+        <div id="resultContent" class="hidden space-y-6">
+            <!-- Header Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 print:shadow-none print:border-none">
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-bold text-slate-800 mb-2" id="examTitle">عنوان الاختبار</h1>
+                    <div class="flex items-center justify-center gap-3 text-sm text-slate-500">
+                        <span id="examSubject">المادة</span>
+                        <span>•</span>
+                        <span id="examDuration">المدة</span>
+                        <span>•</span>
+                        <span id="examCreatedAt">التاريخ</span>
+                    </div>
+                    <div class="mt-2 text-xs text-slate-400">بواسطة: <span id="teacherName">المعلم</span></div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="text-xs font-bold text-slate-400 uppercase mb-1">النسبة المئوية</div>
+                        <div class="text-3xl font-bold text-emerald-600" id="scorePercent">-%</div>
+                    </div>
+                    <div class="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="text-xs font-bold text-slate-400 uppercase mb-1">الإجابات الصحيحة</div>
+                        <div class="text-3xl font-bold text-emerald-600" id="correctCount">-</div>
+                    </div>
+                    <div class="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="text-xs font-bold text-slate-400 uppercase mb-1">الإجابات الخاطئة</div>
+                        <div class="text-3xl font-bold text-red-500" id="incorrectCount">-</div>
+                    </div>
+                    <div class="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="text-xs font-bold text-slate-400 uppercase mb-1">مدة الحل</div>
+                        <div class="text-3xl font-bold text-slate-700" id="durationInfo">-</div>
+                        <div id="totalQuestions" class="hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase">مستوى الإنجاز</span>
+                        <span id="progressLabel" class="text-sm font-bold text-emerald-600">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="progressBar" class="bg-emerald-500 h-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div id="timeEfficiency" class="text-center text-xs text-slate-500 hidden mb-6"></div>
+
+                <!-- Student Info -->
+                <div class="bg-slate-50 rounded-xl p-4 text-sm border border-slate-100 grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div>
+                        <span class="block text-slate-400 text-xs">الطالب</span>
+                        <span class="font-bold text-slate-800" id="studentName">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-slate-400 text-xs">الصف</span>
+                        <span class="font-bold text-slate-800" id="studentClass">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-slate-400 text-xs">رقم الجلوس</span>
+                        <span class="font-bold text-slate-800" id="studentNumber">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-slate-400 text-xs">زمن الحل</span>
+                        <span class="font-bold text-slate-800" id="timeSpent">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-slate-400 text-xs">تاريخ المحاولة</span>
+                        <span class="font-bold text-slate-800" id="attemptDate">-</span>
+                    </div>
+                </div>
+
+                <!-- Passage -->
+                <div class="mt-8 pt-6 border-t border-slate-100">
+                    <h3 class="font-bold text-slate-700 mb-2">النص المرفق</h3>
+                    <div id="examPassage" class="text-sm p-4 bg-slate-50 rounded-lg border border-slate-200 leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- Questions Review -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 print:shadow-none print:border-none">
+                <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                   مراجعة الإجابات التفصيلية
+                </h2>
+                <div id="questionsContainer"></div>
+            </div>
+
+            <!-- Share & Print -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 print:hidden">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="flex-1 w-full md:w-auto">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">رابط المشاركة</label>
+                        <div class="flex gap-2">
+                             <input type="text" id="shareLink" readonly class="text-sm flex-1 p-2 rounded border border-slate-200 bg-slate-50 text-slate-500 dir-ltr text-left">
+                             <button id="copyLinkBtn" class="btn-sm bg-slate-100 hover:bg-slate-200 text-slate-600">نسخ</button>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="whatsAppBtn" class="btn bg-[#25D366] hover:bg-[#20bd5a] text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm">
+                            <span>WhatsApp</span>
+                        </button>
+                         <button id="printBtn" class="btn bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm">
+                            طباعة التقرير
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../../js/result.js"></script>
+</body>
+</html>

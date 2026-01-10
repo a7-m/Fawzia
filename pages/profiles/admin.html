@@ -35,6 +35,9 @@
         <div class="text-right">
           <div class="font-semibold" id="adminName">—</div>
           <div class="text-sm text-slate-500" id="adminEmail">—</div>
+          <a href="create-exam.html" class="inline-block mt-2 btn-sm bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg font-bold shadow-sm transition">
+            <span>+ إنشاء اختبار</span>
+          </a>
         </div>
       </header>
 
@@ -121,6 +124,27 @@
         </div>
       </section>
 
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold">اختباراتي</h2>
+          <span class="text-xs text-slate-500">الاختبارات التي قمت بإنشائها بصفتك مشرفاً</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-slate-50">
+              <tr class="text-right">
+                <th class="px-3 py-2">العنوان</th>
+                <th class="px-3 py-2">المادة</th>
+                <th class="px-3 py-2">الحالة</th>
+                <th class="px-3 py-2">العمليات</th>
+              </tr>
+            </thead>
+            <tbody id="myExamsTableBody"></tbody>
+          </table>
+          <p id="myExamsEmpty" class="hidden text-sm text-slate-500 mt-3">لم تقم بإنشاء أي اختبارات بعد.</p>
+        </div>
+      </section>
+
       <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-bold">النتائج</h2>
@@ -135,6 +159,7 @@
                 <th class="px-3 py-2">المادة</th>
                 <th class="px-3 py-2">الدرجة</th>
                 <th class="px-3 py-2">التاريخ</th>
+                <th class="px-3 py-2">التفاصيل</th>
               </tr>
             </thead>
             <tbody id="resultsTableBody"></tbody>

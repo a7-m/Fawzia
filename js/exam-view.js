@@ -225,13 +225,172 @@ function renderOptions(q) {
       answers[currentIndex] = e.target.value;
     });
     optionsContainer.appendChild(textarea);
+  } else if (q.type === "ordering") {
+    // Ordering: Drag and Drop
+    const list = document.createElement("ul");
+    list.className = "space-y-2";
+    
+    // Initialize standard order if empty, otherwise use saved answer order
+    let currentOrder = Array.isArray(answers[currentIndex]) ? answers[currentIndex] : [...(q.items || [])];
+    // Shuffle if first time loading and no answer yet (optional, but good for exam)
+    if (!answers[currentIndex]) {
+        // Simple shuffle for display
+        currentOrder = [...(q.items || [])].sort(() => Math.random() - 0.5);
+    }
+
+    // Identify visually
+    currentOrder.forEach((itemText, i) => {
+        const li = document.createElement("li");
+        li.className = "p-3 bg-white border border-slate-200 rounded-lg cursor-grab active:cursor-grabbing hover:border-emerald-300 transition flex items-center justify-between shadow-sm select-none";
+        li.draggable = !disableInput;
+        li.textContent = itemText;
+        li.dataset.index = i; // visual index
+
+        if (!disableInput) {
+            li.addEventListener("dragstart", (e) => {
+                e.dataTransfer.setData("text/plain", i);
+                e.dataTransfer.effectAllowed = "move";
+                li.classList.add("opacity-50");
+            });
+            li.addEventListener("dragend", () => {
+                li.classList.remove("opacity-50");
+            });
+            li.addEventListener("dragover", (e) => {
+                e.preventDefault(); // allow drop
+                li.classList.add("border-emerald-500");
+            });
+            li.addEventListener("dragleave", () => {
+                li.classList.remove("border-emerald-500");
+            });
+            li.addEventListener("drop", (e) => {
+                e.preventDefault();
+                li.classList.remove("border-emerald-500");
+                const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
+                if (fromIndex === i) return;
+
+                // Reorder array
+                const movedItem = currentOrder[fromIndex];
+                currentOrder.splice(fromIndex, 1);
+                currentOrder.splice(i, 0, movedItem);
+                
+                // Update answer
+                answers[currentIndex] = [...currentOrder];
+                renderOptions(q); // Re-render to show new order
+            });
+        }
+        list.appendChild(li);
+    });
+    // Save initial state if null
+    if (!answers[currentIndex]) answers[currentIndex] = currentOrder;
+
+    optionsContainer.appendChild(list);
+    const hint = document.createElement("p");
+    hint.className = "text-xs text-slate-500 mt-2 text-center";
+    hint.textContent = "اسحب العناصر ورتبها بالشكل الصحيح.";
+    optionsContainer.appendChild(hint);
+
+  } else if (q.type === "matching") {
+    // Matching: Side-by-side dropdowns or line drawing approach. 
+    // Using dropdowns for simplicity and responsiveness.
+    const wrapper = document.createElement("div");
+    wrapper.className = "space-y-4";
+    
+    const rights = q.rightColumn || [];
+    const lefts = q.leftColumn || [];
+    
+    // Initialize answer object: { "rightText": "leftText" }
+    const currentMatches = answers[currentIndex] || {};
+
+    rights.forEach((rText, idx) => {
+        const row = document.createElement("div");
+        row.className = "flex flex-col sm:flex-row items-center justify-between gap-4 p-3 bg-slate-50 rounded-lg border border-slate-200";
+        
+        const label = document.createElement("span");
+        label.className = "font-medium text-slate-800 w-full sm:w-1/2";
+        label.textContent = rText;
+        
+        const select = document.createElement("select");
+        select.className = "w-full sm:w-1/2 p-2 rounded border border-slate-300 focus:border-emerald-500 outline-none bg-white";
+        select.disabled = disableInput;
+        
+        const defOpt = document.createElement("option");
+        defOpt.textContent = "اختر الإجابة...";
+        defOpt.value = "";
+        select.appendChild(defOpt);
+        
+        lefts.forEach(lText => {
+            const opt = document.createElement("option");
+            opt.value = lText;
+            opt.textContent = lText;
+            if (currentMatches[rText] === lText) opt.selected = true;
+            select.appendChild(opt);
+        });
+
+        select.addEventListener("change", (e) => {
+             const val = e.target.value;
+             currentMatches[rText] = val;
+             answers[currentIndex] = { ...currentMatches };
+        });
+
+        row.appendChild(label);
+        row.appendChild(select);
+        wrapper.appendChild(row);
+    });
+    optionsContainer.appendChild(wrapper);
+
+  } else if (q.type === "click_drag") { // Using as "Range/Slider" per teacher implementation
+    const min = (q.range && q.range[0]) || 0;
+    const max = (q.range && q.range[1]) || 10;
+    
+    const wrapper = document.createElement("div");
+    wrapper.className = "py-8 px-4";
+    
+    const rangeContainer = document.createElement("div");
+    rangeContainer.className = "relative flex items-center";
+
+    const input = document.createElement("input");
+    input.type = "range";
+    input.min = min;
+    input.max = max;
+    input.className = "w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600";
+    input.disabled = disableInput;
+    input.value = answers[currentIndex] !== undefined ? answers[currentIndex] : min;
+
+    const valDisplay = document.createElement("span");
+    valDisplay.className = "absolute -top-10 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-3 py-1 rounded text-sm font-bold shadow-sm transition-all";
+    valDisplay.textContent = input.value;
+    
+    // Position label dynamically
+    const updateLabel = () => {
+        const percent = ((input.value - min) / (max - min)) * 100;
+        valDisplay.style.left = `calc(${percent}% + (${8 - percent * 0.15}px))`;
+        valDisplay.textContent = input.value;
+    };
+    
+    // Initial position
+    setTimeout(updateLabel, 0);
+
+    input.addEventListener("input", (e) => {
+        answers[currentIndex] = Number(e.target.value);
+        updateLabel();
+    });
+
+    rangeContainer.appendChild(input);
+    rangeContainer.appendChild(valDisplay);
+    
+    const labels = document.createElement("div");
+    labels.className = "flex justify-between text-xs text-slate-400 mt-2 font-mono";
+    labels.innerHTML = `<span>${min}</span><span>${max}</span>`;
+    
+    wrapper.appendChild(rangeContainer);
+    wrapper.appendChild(labels);
+    optionsContainer.appendChild(wrapper);
+
   } else {
-    // Fallback for complex types (ordering/matching/click_drag)
+    // Fallback logic kept just in case
     const note = document.createElement("div");
-    note.className =
-      "px-4 py-3 rounded-lg bg-slate-50 border border-dashed border-slate-200 text-sm text-slate-600";
-    note.textContent =
-      "يتم عرض هذا السؤال للمعاينة. التفاعل الكامل سيتم دعمه في نسخة قادمة.";
+    note.className = "px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm";
+    note.textContent = "نوع السؤال غير مدعوم.";
     optionsContainer.appendChild(note);
   }
 }
@@ -288,7 +447,115 @@ function startTimerIfNeeded() {
   timerId = setInterval(tick, 1000);
 }
 
-function bindNavigation() {
+function checkAnswer(q, ans) {
+  if (ans === null || ans === undefined) return false;
+  
+  if (["multiple_choice", "dropdown"].includes(q.type)) {
+    return Number(ans) === Number(q.correct);
+  }
+  
+  if (q.type === "multiple_select") {
+    if (!Array.isArray(ans) || !Array.isArray(q.correct)) return false;
+    const sortedAns = [...ans].map(Number).sort((a, b) => a - b);
+    const sortedCorr = [...q.correct].map(Number).sort((a, b) => a - b);
+    return JSON.stringify(sortedAns) === JSON.stringify(sortedCorr);
+  }
+  
+  if (q.type === "click_drag") {
+    return Number(ans) === Number(q.correct);
+  }
+
+  if (q.type === "ordering") {
+    // Exact order match
+    if (!Array.isArray(ans) || !Array.isArray(q.correctOrder)) return false;
+    return JSON.stringify(ans) === JSON.stringify(q.correctOrder);
+  }
+
+  if (q.type === "matching") {
+    // Exact matches object
+    if (typeof ans !== "object" || typeof q.correctMatches !== "object") return false;
+    // Compare key-values
+    const keys = Object.keys(q.correctMatches);
+    if (Object.keys(ans).length !== keys.length) return false;
+    for (const k of keys) {
+        if (ans[k] !== q.correctMatches[k]) return false;
+    }
+    return true;
+  }
+
+  // Essay is manual grading -> always false here (or 'needs review')
+  return false; 
+}
+
+async function submitExam(user) {
+  if (mode === "preview") return;
+  
+  // Stop timer
+  if (timerId) {
+    clearInterval(timerId);
+    timerId = null;
+  }
+
+  showStatus("جاري تصحيح وإرسال الإجابات...");
+  submitExamBtn.disabled = true;
+  submitExamBtn.textContent = "جاري الإرسال...";
+
+  // Calculate Score
+  let correctCount = 0;
+  let incorrectCount = 0;
+  
+  questions.forEach((q, idx) => {
+    // Skip essay for auto-grade count, specific logic needed
+    if (q.type === "essay") {
+       // Essay is not auto-graded here
+       return;
+    }
+    
+    const isCorrect = checkAnswer(q, answers[idx]);
+    if (isCorrect) correctCount++;
+    else incorrectCount++;
+  });
+
+  const totalAutoGradable = questions.filter(q => q.type !== "essay").length;
+  const scorePercentage = totalAutoGradable > 0 
+    ? Math.round((correctCount / totalAutoGradable) * 100) 
+    : 0;
+    
+  // Time spent
+  const timeSpent = (examData.duration ? examData.duration * 60 : 0) - (remainingSeconds || 0);
+
+  try {
+    const payload = {
+      user_id: user.uid || user.id,
+      exam_id: examData.id,
+      subject: examData.subject,
+      level: examData.title, // using title as level descriptor roughly
+      score_percentage: scorePercentage,
+      correct_count: correctCount,
+      incorrect_count: incorrectCount,
+      time_spent_seconds: Math.max(timeSpent, 0),
+      answers: answers,
+      student_name: user.full_name || user.email
+    };
+
+    const { error } = await supabase.from("attempts").insert(payload);
+
+    if (error) throw error;
+
+    showStatus(`تم إنهاء الاختبار! درجتك التقريبية: ${scorePercentage}%`, "success");
+    setTimeout(() => {
+        window.location.href = "student.html#resultsTableBody";
+    }, 2000);
+
+  } catch (err) {
+    console.error(err);
+    showStatus("حدث خطأ أثناء حفظ النتيجة. يرجى المحاولة مرة أخرى.", "error");
+    submitExamBtn.disabled = false;
+    submitExamBtn.textContent = "إعادة المحاولة";
+  }
+}
+
+function bindNavigation(user) {
   if (prevQuestionBtn) {
     prevQuestionBtn.addEventListener("click", () => {
       if (currentIndex > 0) {
@@ -307,12 +574,9 @@ function bindNavigation() {
   }
   if (submitExamBtn) {
     submitExamBtn.addEventListener("click", () => {
-      if (mode === "preview") return;
-      if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-      }
-      alert("تم إرسال إجاباتك. (حفظ النتائج سيضاف لاحقاً)");
+        if (confirm("هل أنت متأكد من إنهاء الاختبار وتسليم الإجابة؟")) {
+            submitExam(user);
+        }
     });
   }
 }
@@ -348,7 +612,7 @@ async function loadExam(examId, user) {
 
   if (examContainer) examContainer.classList.remove("hidden");
   updateModeUI();
-  bindNavigation();
+  bindNavigation(user);
   renderQuestion();
   startTimerIfNeeded();
 }

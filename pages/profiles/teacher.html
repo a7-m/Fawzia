@@ -37,7 +37,27 @@
         </div>
       </header>
 
+      <div class="flex justify-end">
+        <a href="create-exam.html" class="btn bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-bold shadow-sm transition flex items-center gap-2">
+          <span>+</span>
+          <span>إنشاء اختبار جديد</span>
+        </a>
+      </div>
+
       <div id="statusMessage" class="hidden rounded-xl border px-4 py-3 text-sm font-semibold"></div>
+
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 mb-4">
+         <h2 class="text-lg font-bold mb-4">الملف الشخصي</h2>
+        <form id="profileForm" class="grid gap-4 md:grid-cols-2 items-end">
+          <div>
+            <label class="text-sm font-semibold text-slate-700">الاسم الكامل</label>
+            <input id="nameInput" class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2 focus:border-emerald-500 outline-none" placeholder="الاسم الكامل" />
+          </div>
+          <div>
+             <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-bold shadow-sm transition">حفظ التعديلات</button>
+          </div>
+        </form>
+      </section>
 
       <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 space-y-4">
         <div class="flex items-center justify-between">
@@ -68,6 +88,27 @@
         </div>
       </section>
 
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold">اختباراتي</h2>
+          <span class="text-xs text-slate-500">الاختبارات التي قمت بإنشائها</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-slate-50">
+              <tr class="text-right">
+                <th class="px-3 py-2">العنوان</th>
+                <th class="px-3 py-2">المادة</th>
+                <th class="px-3 py-2">الحالة</th>
+                <th class="px-3 py-2">العمليات</th>
+              </tr>
+            </thead>
+            <tbody id="myExamsTableBody"></tbody>
+          </table>
+          <p id="myExamsEmpty" class="hidden text-sm text-slate-500 mt-3">لم تقم بإنشاء أي اختبارات بعد.</p>
+        </div>
+      </section>
+
       <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-bold">نتائج الطلاب</h2>
@@ -81,6 +122,7 @@
                 <th class="px-3 py-2">الصف</th>
                 <th class="px-3 py-2">الدرجة</th>
                 <th class="px-3 py-2">التاريخ</th>
+                <th class="px-3 py-2">التفاصيل</th>
               </tr>
             </thead>
             <tbody id="resultsTableBody"></tbody>

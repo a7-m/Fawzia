@@ -144,10 +144,10 @@ function renderExams(exams, user) {
     const startBtn = document.createElement(engine === "teacher" ? "a" : "button");
     startBtn.className =
       "btn px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow";
-    startBtn.textContent = user.isTeacher ? "معاينة الاختبار" : "بدء الاختبار";
+    startBtn.textContent = (user.isTeacher || user.isAdmin) ? "معاينة الاختبار" : "بدء الاختبار";
     if (engine === "teacher") {
       startBtn.href = `./exam-view.html?exam_id=${exam.id}&mode=${
-        user.isTeacher ? "preview" : "run"
+        (user.isTeacher || user.isAdmin) ? "preview" : "run"
       }`;
     } else {
       startBtn.addEventListener("click", () => {
@@ -157,15 +157,26 @@ function renderExams(exams, user) {
     }
 
     actions.appendChild(startBtn);
-    actions.appendChild(viewBtn);
 
-    if (user.isTeacher) {
-      const resultsLink = document.createElement("a");
-      resultsLink.href = "./admin.html#resultsTableBody";
-      resultsLink.className =
-        "btn-ghost px-4 py-2 text-sm rounded-full border border-slate-200 text-slate-700";
-      resultsLink.textContent = "عرض النتائج";
-      actions.appendChild(resultsLink);
+    // Edit Button for Teachers/Admins
+    if (user.isTeacher || user.isAdmin) {
+       const editBtn = document.createElement("a");
+       editBtn.className = "btn-ghost px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 text-slate-700 hover:text-emerald-600 hover:border-emerald-200";
+       editBtn.textContent = "تعديل";
+       editBtn.href = `./create-exam.html?exam_id=${exam.id}`;
+       actions.appendChild(editBtn);
+    } else {
+       // Only show View Details for students if not a teacher engine (or if we want them to see details)
+       actions.appendChild(viewBtn);
+    }
+    
+    if (user.isTeacher || user.isAdmin) {
+       // Results link...
+       const resultsLink = document.createElement("a");
+       resultsLink.href = "./admin.html#resultsTableBody";
+       resultsLink.className = "btn-ghost px-4 py-2 text-sm rounded-full border border-slate-200 text-slate-700";
+       resultsLink.textContent = "عرض النتائج";
+       actions.appendChild(resultsLink);
     }
 
     card.appendChild(info);

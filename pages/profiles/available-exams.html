@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاختبارات المتاحة | Fawzia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 font-[Cairo]">
+
+    <nav class="main-nav" aria-label="شريط التنقل">
+      <div class="nav-brand">
+        <a class="nav-logo" href="../../index.html">
+          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+          <span class="brand-text">اختبارات بيرلز</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item"><a class="nav-link" href="../../index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="student.html">الملف الشخصي</a></li>
+      </ul>
+      <div class="theme-toggle-container">
+         <a href="student.html" class="btn-ghost px-4 py-2 text-sm">عودة للملف الشخصي</a>
+      </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <header>
+          <div class="flex items-center gap-2 mb-2 text-slate-500 text-sm">
+              <a href="student.html" class="hover:text-emerald-600">الملف الشخصي</a>
+              <span>/</span>
+              <span>الاختبارات المتاحة</span>
+          </div>
+          <h1 class="text-2xl font-bold text-slate-900">جميع الاختبارات المتاحة</h1>
+          <p class="text-slate-500 mt-2">يمكنك تصفح الاختبارات العامة واختبارات المعلمين هنا.</p>
+      </header>
+
+      <div id="statusMessage" class="hidden rounded-xl border px-4 py-3 text-sm font-semibold"></div>
+
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6">
+        <div id="examsList" class="space-y-4"></div>
+      </section>
+    </main>
+
+    <script type="module" src="../../js/exams.js"></script>
+    <script type="module" src="../../js/script.js"></script>
+</body>
+</html>

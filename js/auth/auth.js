@@ -18,7 +18,7 @@ export const COMPLETE_PROFILE_PAGE = pagePath("auth/complete-profile.html");
 export const ADMIN_PROFILE_PAGE = pagePath("profiles/admin.html");
 export const TEACHER_PROFILE_PAGE = pagePath("profiles/teacher.html");
 export const STUDENT_PROFILE_PAGE = pagePath("profiles/student.html");
-export const OAUTH_REDIRECT = `${window.location.origin}/${LOGIN_PAGE.replace(/^\.\//, "")}`;
+export const OAUTH_REDIRECT = new URL(LOGIN_PAGE, window.location.href).href;
 
 // --- Supabase Client ---
 const SUPABASE_URL = window.env?.SUPABASE_URL || "https://wpzbbapmpdfnyhevchty.supabase.co";

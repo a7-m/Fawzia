@@ -40,7 +40,7 @@ async function loadResults(uid) {
   resultsTbody.innerHTML = "";
   const { data, error } = await supabase
     .from("attempts")
-    .select("exam_id, subject, level, score_percentage, created_at")
+    .select("id, exam_id, subject, level, score_percentage, created_at")
     .eq("user_id", uid)
     .order("created_at", { ascending: false });
   if (error) throw error;
@@ -54,6 +54,11 @@ async function loadResults(uid) {
       <td class="px-3 py-2">${a.subject || "-"}</td>
       <td class="px-3 py-2">${typeof a.score_percentage === "number" ? a.score_percentage + "%" : "-"}</td>
       <td class="px-3 py-2">${a.created_at ? new Date(a.created_at).toLocaleString("ar-EG") : "-"}</td>
+      <td class="px-3 py-2">
+         <a href="result-view.html?attempt_id=${a.exam_id ? a.id : "#"}" class="btn-ghost px-3 py-1 text-xs rounded border border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-200">
+           تفاصل
+         </a>
+      </td>
     `;
     resultsTbody.appendChild(tr);
   });
@@ -72,7 +77,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("studentEmail").textContent = user.email || "";
     if (logoutBtn) logoutBtn.addEventListener("click", () => signOut());
 
-    await loadProfile(user.uid);
+
+    // Load data
+    await loadProfile(user.uid); // Assuming loadStudentData is loadProfile
     await loadResults(user.uid);
 
     const formEl = document.getElementById("profileForm");
@@ -83,6 +90,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           hideStatus(statusEl);
           await saveProfile(user.uid);
           setStatus(statusEl, "تم حفظ التعديلات بنجاح ✅", "success");
+          
+          // Update display name
+          const newName = document.getElementById("nameInput").value;
+          document.getElementById("studentName").textContent = newName;
+          
         } catch (err) {
           console.error(err);
           setStatus(statusEl, "تعذر حفظ التعديلات", "error");

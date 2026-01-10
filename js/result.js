@@ -152,25 +152,49 @@ async function fetchResult(attemptId, currentUser) {
 }
 
 function fillExamSection(exam, attempt) {
-  qs("examTitle").textContent = exam?.title || attempt.subject || "-";
-  qs("examSubject").textContent = exam?.subject || attempt.subject || "-";
-  qs("examDuration").textContent =
-    exam?.duration !== undefined && exam?.duration !== null
-      ? `${exam.duration} دقيقة`
-      : "-";
-  qs("examCreatedAt").textContent = formatDate(exam?.created_at);
-  qs("teacherName").textContent = exam?.author_name || "—";
-  qs("examPassage").innerHTML = exam?.passage
-    ? exam.passage
-    : '<span class="text-slate-400">لا يوجد نص مرفق</span>';
+  const titleEl = qs("examTitle");
+  if (titleEl) titleEl.textContent = exam?.title || attempt.subject || "-";
+  
+  const subjectEl = qs("examSubject");
+  if (subjectEl) subjectEl.textContent = exam?.subject || attempt.subject || "-";
+  
+  const durationEl = qs("examDuration");
+  if (durationEl) {
+    durationEl.textContent =
+      exam?.duration !== undefined && exam?.duration !== null
+        ? `${exam.duration} دقيقة`
+        : "-";
+  }
+  
+  const createdEl = qs("examCreatedAt");
+  if (createdEl) createdEl.textContent = formatDate(exam?.created_at);
+  
+  const teacherEl = qs("teacherName");
+  if (teacherEl) teacherEl.textContent = exam?.author_name || "—";
+  
+  const passageEl = qs("examPassage");
+  if (passageEl) {
+    passageEl.innerHTML = exam?.passage
+      ? exam.passage
+      : '<span class="text-slate-400">لا يوجد نص مرفق</span>';
+  }
 }
 
 function fillStudentSection(profile, attempt) {
-  qs("studentName").textContent = profile?.name || attempt.student_name || "—";
-  qs("studentClass").textContent = profile?.class || "—";
-  qs("studentNumber").textContent = profile?.student_number || "—";
-  qs("attemptDate").textContent = formatDate(attempt.created_at);
-  qs("timeSpent").textContent = formatDuration(attempt.time_spent_seconds);
+  const nameEl = qs("studentName");
+  if (nameEl) nameEl.textContent = profile?.name || attempt.student_name || "—";
+  
+  const classEl = qs("studentClass");
+  if (classEl) classEl.textContent = profile?.class || "—";
+  
+  const numberEl = qs("studentNumber");
+  if (numberEl) numberEl.textContent = profile?.student_number || "—";
+  
+  const dateEl = qs("attemptDate");
+  if (dateEl) dateEl.textContent = formatDate(attempt.created_at);
+  
+  const timeEl = qs("timeSpent");
+  if (timeEl) timeEl.textContent = formatDuration(attempt.time_spent_seconds);
 }
 
 function fillSummary(attempt, examQuestions = []) {
@@ -182,14 +206,25 @@ function fillSummary(attempt, examQuestions = []) {
       ? (attempt.correct_count / total) * 100
       : 0;
 
-  qs("scorePercent").textContent = percent ? `${percent.toFixed(1)}%` : "-";
-  qs("correctCount").textContent = attempt.correct_count ?? "-";
-  qs("incorrectCount").textContent = attempt.incorrect_count ?? "-";
-  qs("totalQuestions").textContent = total || examQuestions.length || "-";
-  qs("durationInfo").textContent =
-    examQuestions.length && attempt.time_spent_seconds
-      ? formatDuration(attempt.time_spent_seconds)
-      : "-";
+  const scoreEl = qs("scorePercent");
+  if (scoreEl) scoreEl.textContent = percent ? `${percent.toFixed(1)}%` : "-";
+  
+  const correctEl = qs("correctCount");
+  if (correctEl) correctEl.textContent = attempt.correct_count ?? "-";
+  
+  const incorrectEl = qs("incorrectCount");
+  if (incorrectEl) incorrectEl.textContent = attempt.incorrect_count ?? "-";
+  
+  const totalEl = qs("totalQuestions");
+  if (totalEl) totalEl.textContent = total || examQuestions.length || "-";
+  
+  const durationInfoEl = qs("durationInfo");
+  if (durationInfoEl) {
+    durationInfoEl.textContent =
+      examQuestions.length && attempt.time_spent_seconds
+        ? formatDuration(attempt.time_spent_seconds)
+        : "-";
+  }
 
   const efficiency =
     attempt.time_spent_seconds && total

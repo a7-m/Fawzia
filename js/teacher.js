@@ -14,10 +14,88 @@ let currentQIndex = 0;
 let currentStep = 1;
 let dragIndex = null;
 let currentUser = null;
+let editingExamId = null;
 
 (async () => {
-  currentUser = await checkAuth({ protected: true, adminOnly: true });
+  currentUser = await checkAuth({ protected: true });
+  if (currentUser && !currentUser.isTeacher && !currentUser.isAdmin) {
+    alert("هذه الصفحة مخصصة للمعلمين والمشرفين فقط.");
+    window.location.replace("../../index.html");
+    return;
+  }
+
+  // Check for editing mode
+  const params = new URLSearchParams(window.location.search);
+  const examId = params.get("exam_id");
+  if (examId) {
+    editingExamId = examId;
+    await loadExamForEditing(examId);
+  }
 })();
+
+async function loadExamForEditing(id) {
+  try {
+    const { data, error } = await supabase
+        .from("exams")
+        .select("*")
+        .eq("id", id)
+        .single();
+    
+    if (error) throw error;
+    if (!data) return;
+
+    // Populate Metadata
+    testMetadata.title = data.title;
+    testMetadata.subject = data.subject;
+    testMetadata.duration = data.duration;
+    testMetadata.isPublic = data.visibility === "public";
+    
+    // Attempt to extract image from passage if stored in that way
+    // (This works if we stored it as: TITLE ـــــ (نص) \n\n<img ...>\n\nPASSAGE)
+    // We will do a simple split if possible, or just load passage as is.
+    // For robust editing, we'll just put the full content in passage for now
+    // unless we want to parse out the image. 
+    // Let's rely on user putting it back if they want.
+    // Ideally we would have stored image separately.
+    testMetadata.passage = data.passage; 
+    
+    document.getElementById("testTitle").value = data.title || "";
+    document.getElementById("subject").value = data.subject || "لغة عربية";
+    document.getElementById("testDuration").value = data.duration || 0;
+    
+    // Radio buttons
+    const radios = document.getElementsByName("publishStatus");
+    if (radios.length) {
+        radios.forEach(r => {
+            if (r.value === (data.visibility === "public" ? "public" : "private")) r.checked = true;
+        });
+    }
+
+    document.getElementById("readingPassage").value = data.passage || "";
+
+    // Questions
+    if (Array.isArray(data.questions)) {
+        questions = data.questions;
+    } else if (typeof data.questions === "string") {
+        try { questions = JSON.parse(data.questions); } catch(e){ questions =[]; }
+    }
+    
+    if (questions.length === 0) {
+        questions.push(createEmptyQuestion());
+    }
+    
+    refreshQuestionList();
+    renderQuestion();
+
+    // Update UI title
+    document.querySelector("header h1").textContent = "تعديل الاختبار";
+    savePublishBtn.textContent = "حفظ التعديلات";
+
+  } catch(err) {
+    console.error("Error loading exam:", err);
+    alert("تعذر تحميل بيانات الاختبار للتعديل.");
+  }
+}
 
 // --- DOM Elements ---
 const stepCards = document.querySelectorAll("[data-step]");
@@ -736,7 +814,13 @@ savePublishBtn.addEventListener("click", async () => {
 
   // Process Passage Image
   let processedPassage = testMetadata.passage;
+  // Only add image tag if it doesn't already exist or if we want to prepend.
+  // When editing, if user didn't change passage, it might already have the tag.
+  // Simple check: if image field is filled, prepend it.
   if (testMetadata.image && testMetadata.image.trim()) {
+      // If passage already contains this image src, maybe skip?
+      // but user might want to change it.
+      // Let's just prepend.
     const imgTag = `<img src="${testMetadata.image}" alt="${testMetadata.title}" style="width: 50%; border-radius: 8px; margin-top: 15px; display: block; margin-left: auto; margin-right: auto;">`;
     processedPassage = `${testMetadata.title} ـــــ (نص) \n\n${imgTag}\n\n${testMetadata.passage}`;
   }
@@ -767,26 +851,50 @@ savePublishBtn.addEventListener("click", async () => {
       alert("الرجاء تسجيل الدخول كمعلمة.");
       return;
     }
+    
+    const visibility = finalData.isPublic ? "public" : "private";
 
-    const { error } = await supabase.from("exams").insert({
-      title: finalData.title,
-      visibility: finalData.isPublic ? "public" : "private",
-      passage: finalData.passage,
-      questions: finalData.questions,
-      duration: finalData.duration,
-      subject: finalData.subject,
-      author_id: fallbackUser.uid || fallbackUser.id,
-      engine: "teacher",
-    });
+    if (editingExamId) {
+        // UPDATE
+        const { error } = await supabase.from("exams").update({
+            title: finalData.title,
+            visibility: visibility,
+            passage: finalData.passage,
+            questions: finalData.questions,
+            duration: finalData.duration,
+            subject: finalData.subject,
+            // author_id: keep original
+        }).eq("id", editingExamId);
+        
+        if (error) throw error;
+        alert("تم تعديل الاختبار بنجاح ✅");
+    } else {
+        // INSERT
+        const { error } = await supabase.from("exams").insert({
+          title: finalData.title,
+          visibility: visibility,
+          passage: finalData.passage,
+          questions: finalData.questions,
+          duration: finalData.duration,
+          subject: finalData.subject,
+          author_id: fallbackUser.uid || fallbackUser.id,
+          engine: "teacher",
+        });
 
-    if (error) throw error;
+        if (error) throw error;
+        alert("تم حفظ الاختبار الجديد بنجاح ✅");
+    }
+    
+    // Redirect back to list
+    setTimeout(() => {
+        window.location.href = "available-exams.html";
+    }, 1000);
 
-    alert("تم حفظ الاختبار في Supabase بنجاح ✅");
   } catch (e) {
     console.error(e);
     alert("حدث خطأ: " + e.message);
   } finally {
-    savePublishBtn.textContent = "نشر الاختبار";
+    savePublishBtn.textContent = editingExamId ? "حفظ التعديلات" : "نشر الاختبار";
     savePublishBtn.disabled = false;
   }
 });
