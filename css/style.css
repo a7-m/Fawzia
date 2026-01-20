@@ -40,32 +40,32 @@ html.dark {
   --primary: #14b8a6; /* Teal 500 */
   --primary-rgb: 20, 184, 166;
   --primary-hover: #2dd4bf; /* Teal 400 */
-  
+
   --secondary: #60a5fa; /* Blue 400 */
   --secondary-rgb: 96, 165, 250;
   --secondary-hover: #93c5fd; /* Blue 300 */
-  
+
   --background: #0f172a; /* Slate 900 */
   --background-rgb: 15, 23, 42;
-  
+
   --surface: #1e293b; /* Slate 800 */
   --surface-rgb: 30, 41, 59;
   --surface-muted: #334155; /* Slate 700 */
   --surface-strong: #1b2c43;
-  
+
   --text: #f1f5f9; /* Slate 100 */
   --text-rgb: 241, 245, 249;
   --text-muted: #94a3b8; /* Slate 400 */
   --text-inverse: #0f172a;
-  
+
   --accent: #fbbf24; /* Amber 400 */
   --border: #334155; /* Slate 700 */
-  
+
   --shadow-color: 0, 0, 0;
   --shadow: 0 30px 60px rgba(0, 0, 0, 0.36);
   --shadow-soft: 0 18px 36px rgba(0, 0, 0, 0.26);
   --focus-ring: 0 0 0 3px rgba(var(--primary-rgb), 0.26);
-  
+
   --glass-bg: rgba(30, 41, 59, 0.7);
   --glass-border: rgba(255, 255, 255, 0.1);
 }
@@ -93,9 +93,16 @@ body {
   color: var(--text);
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(var(--primary-rgb), 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(var(--secondary-rgb), 0.05) 0px, transparent 50%);
+  background-image: radial-gradient(
+      at 0% 0%,
+      rgba(var(--primary-rgb), 0.1) 0px,
+      transparent 50%
+    ),
+    radial-gradient(
+      at 100% 100%,
+      rgba(var(--secondary-rgb), 0.05) 0px,
+      transparent 50%
+    );
   background-attachment: fixed;
 }
 
@@ -180,7 +187,11 @@ a {
   gap: 12px;
   padding: 8px 16px;
   border-radius: 16px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-hover) 100%
+  );
   color: white; /* Always white on the gradient button */
   transition: transform 0.3s ease;
   box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
@@ -1367,4 +1378,27 @@ body,
 .scroll-to-paragraph-btn:hover {
   background-color: var(--primary);
   color: white;
+}
+
+/* Watermark Style */
+.watermark {
+  position: relative;
+  margin-top: 50px;
+  padding-bottom: 24px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+  pointer-events: none;
+  text-align: center;
+  width: 100%;
+  font-family: "Cairo", sans-serif;
+  user-select: none;
+}
+
+@media print {
+  .watermark {
+    position: absolute;
+    bottom: 10px;
+    opacity: 0.4;
+  }
 }

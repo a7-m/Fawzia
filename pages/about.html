@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عن المنصة | اختبارات بيرلز الدولية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 50px;
+        }
+        .developer-card {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            text-align: center;
+            max-width: 600px;
+            margin: -100px auto 50px;
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-[--background] text-[--text] font-['Cairo']">
+    <nav class="main-nav" aria-label="شريط التنقل">
+        <div class="nav-brand">
+            <a class="nav-logo" href="../index.html">
+                <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+                <span class="brand-text">اختبارات بيرلز</span>
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item"><a class="nav-link" href="../index.html">الرئيسية</a></li>
+            <li class="nav-item"><a class="nav-link active" href="about.html">عن المنصة</a></li>
+        </ul>
+        <div class="theme-toggle-container">
+            <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم">
+                <span class="theme-icon">🌙</span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="about-hero">
+        <h1 class="text-4xl font-bold mb-4">منصة اختبارات بيرلز الدولية</h1>
+        <p class="text-xl opacity-90">تحديد مستوى الفهم القرائي بدقة واحترافية</p>
+    </header>
+
+    <main class="container mx-auto px-6 pb-20">
+        <section class="developer-card">
+            <div class="text-5xl mb-6">💻</div>
+            <h2 class="text-2xl font-bold mb-2">مبرمج و مصمم الموقع</h2>
+            <p class="text-2xl text-[--primary] font-bold">أحمد عصام عبدالمنعم</p>
+            <p class="mt-4 text-[--text-muted]">
+                تم تطوير هذه المنصة لخدمة العملية التعليمية وتسهيل إجراء اختبارات بيرلز الدولية (PIRLS) وتوفير نتائج دقيقة وتحليلات فورية للمعلمين والطلاب.
+            </p>
+        </section>
+
+        <section class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+            <div class="page active p-8">
+                <h3 class="text-xl font-bold mb-4 text-[--primary]">ما هي دراسة PIRLS؟</h3>
+                <p>دراسة بيرلز الدولية (Progress in International Reading Literacy Study) هي تقييم عالمي يقيس اتجاهات مهارات القراءة لدى طلاب الصف الرابع كل خمس سنوات، وتهدف إلى تحسين تعليم وتعلم القراءة في جميع أنحاء العالم.</p>
+            </div>
+            <div class="page active p-8">
+                <h3 class="text-xl font-bold mb-4 text-[--primary]">الفئة المستهدفة</h3>
+                <p>تستهدف هذه المنصة بشكل خاص <strong>طلاب الصف الرابع الابتدائي</strong>، حيث توفر لهم بيئة تفاعلية لمحاكاة الاختبارات الدولية وتطوير مهاراتهم القرائية للوصول إلى أعلى مستويات الفهم.</p>
+            </div>
+        </section>
+
+        <section class="max-w-4xl mx-auto space-y-8">
+            <div class="page active p-8">
+                <h2 class="text-2xl font-bold mb-6 text-center text-[--primary]">مميزات المنصة</h2>
+                <div class="grid md:grid-cols-3 gap-6 text-center">
+                    <div>
+                        <div class="text-3xl mb-3">📄</div>
+                        <h4 class="font-bold mb-2">تنوع النصوص</h4>
+                        <p class="text-sm">نصوص أدبية ومعلوماتية تحاكي معايير الاختبار الدولي.</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl mb-3">⚡</div>
+                        <h4 class="font-bold mb-2">نتائج فورية</h4>
+                        <p class="text-sm">تصحيح تلقائي ونتائج فورية تظهر للطالب فور الانتهاء.</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl mb-3">📊</div>
+                        <h4 class="font-bold mb-2">لوحة المعلم</h4>
+                        <p class="text-sm">أدوات متكاملة للمعلمين لمتابعة تقدم الطلاب وتحليل النتائج.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page active p-8">
+                <h3 class="text-xl font-bold mb-4 text-[--primary]">منهجية التقييم</h3>
+                <p class="mb-4">تعتمد المنصة في تقييمها على أربعة مستويات من الفهم القرائي وفقاً لمعايير PIRLS:</p>
+                <ul class="list-disc list-inside space-y-2 text-sm md:text-base">
+                    <li>التركيز واسترجاع المعلومات الصريحة.</li>
+                    <li>القيام باستنتاجات مباشرة.</li>
+                    <li>تفسير ودمج الأفكار والمعلومات.</li>
+                    <li>فحص وتقييم المحتوى والعناصر النصية.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <div class="watermark">
+        © أحــمـد عـصــام ـــ اختبارات بيرلز الدولية. جميع الحقوق محفوظة 2026
+    </div>
+
+    <script type="module" src="../js/script.js"></script>
+</body>
+</html>
