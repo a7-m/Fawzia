@@ -202,8 +202,16 @@ a {
 }
 
 .brand-mark {
-  font-size: 1.5rem;
-  color: white;
+  width: 44px;
+  height: 44px;
+  display: inline-block;
+  border-radius: 50%;
+  background-image: url("../images&video/مدرسة الطالب الذكي.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: transparent;
+  font-size: 0;
 }
 
 .brand-text {
@@ -646,6 +654,13 @@ html.dark ::placeholder {
   transition: width 0.3s ease;
 }
 
+.question-progress {
+  margin: 0 0 18px;
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
 .question-container {
   margin: 32px 0;
   background: var(--surface);
@@ -691,6 +706,13 @@ html.dark ::placeholder {
   border: 1px solid rgba(var(--border), 1);
   padding: 22px;
   box-shadow: var(--shadow-soft);
+}
+
+.drag-drop-container,
+.dropdown-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .option,
@@ -955,6 +977,13 @@ html.dark .page tbody tr:hover {
   color: var(--text);
 }
 
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
 .essay-instructions,
 .multiple-select-instructions {
   background: rgba(var(--primary-rgb), 0.12);
@@ -987,6 +1016,7 @@ html.dark .page tbody tr:hover {
   color: rgba(var(--primary-rgb), 1);
 }
 
+.answer-status,
 #answerNote {
   background: rgba(var(--primary-rgb), 0.12);
   color: var(--primary);
@@ -994,6 +1024,11 @@ html.dark .page tbody tr:hover {
   padding: 14px 18px;
   border: 1px solid rgba(var(--primary-rgb), 0.3);
   display: none;
+}
+
+.answer-status p {
+  margin: 0;
+  font-weight: 600;
 }
 
 .results-summary {
@@ -1334,6 +1369,31 @@ body,
   background: #05a78486;
   color: var(--text);
   font-weight: bold;
+}
+
+.matching-item {
+  position: relative;
+}
+
+.matching-highlight {
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.35);
+}
+
+.matching-cancel-btn {
+  position: absolute;
+  top: 8px;
+  inset-inline-start: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  color: #d32f2f;
+  font-weight: 700;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 700px) {
