@@ -9,10 +9,12 @@ const examContainer = qs("examContainer");
 const modeBadge = qs("modeBadge");
 const timerDisplay = qs("timerDisplay");
 const progressText = qs("progressText");
+const progressFill = qs("progressFill");
 const previewHint = qs("previewHint");
+const questionNumber = qs("questionNumber");
 const questionText = qs("questionText");
-const questionMeta = qs("questionMeta");
 const optionsContainer = qs("optionsContainer");
+const answerNote = qs("answerNote");
 const prevQuestionBtn = qs("prevQuestionBtn");
 const nextQuestionBtn = qs("nextQuestionBtn");
 const submitExamBtn = qs("submitExamBtn");
@@ -86,8 +88,7 @@ function renderActions(exam, user) {
   if (engine !== "teacher") {
     // Respect engine separation: no redirects from teacher engine view
     const note = document.createElement("div");
-    note.className =
-      "px-4 py-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-sm";
+    note.className = "info-card";
     note.textContent =
       "هذا الاختبار تابع لمحرك النظام ويُعرض فقط عبر الصفحة الرئيسية.";
     actionContainer.appendChild(note);
@@ -95,8 +96,7 @@ function renderActions(exam, user) {
   }
 
   const primaryLink = document.createElement("a");
-  primaryLink.className =
-    "btn px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow";
+  primaryLink.className = "btn";
   primaryLink.textContent = user.isTeacher ? "معاينة" : "بدء الاختبار";
   primaryLink.href = `exam-view.html?exam_id=${exam.id}&mode=${
     user.isTeacher ? "preview" : "run"
@@ -106,8 +106,7 @@ function renderActions(exam, user) {
   if (user.isTeacher) {
     const attemptsLink = document.createElement("a");
     attemptsLink.href = "./admin.html#resultsTableBody";
-    attemptsLink.className =
-      "btn-ghost px-4 py-2 text-sm rounded-full border border-slate-200 text-slate-700";
+    attemptsLink.className = "btn btn-ghost";
     attemptsLink.textContent = "عرض النتائج";
     actionContainer.appendChild(attemptsLink);
   }
@@ -122,12 +121,7 @@ function fillExam(exam) {
     ? `المدة: ${exam.duration} دقيقة`
     : "المدة: غير محددة";
   qs("examVisibility").textContent =
-    exam.visibility === "public" ? "عام" : "خاص";
-  qs("examVisibility").className =
-    "px-3 py-1 rounded-full text-sm " +
-    (exam.visibility === "public"
-      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-      : "bg-amber-50 text-amber-700 border border-amber-100");
+    exam.visibility === "public" ? "الخصوصية: عام" : "الخصوصية: خاص";
   qs("examCreatedAt").textContent = `أُنشئ: ${formatDate(exam.created_at)}`;
   qs("questionsCount").textContent = `${(exam.questions || []).length} سؤال`;
   const passageEl = qs("examPassage");
@@ -143,13 +137,12 @@ function updateModeUI() {
   const isPreview = mode === "preview";
   modeBadge.textContent = isPreview ? "وضع المعاينة" : "وضع الاختبار";
   modeBadge.className =
-    "px-3 py-1 rounded-full text-xs border " +
+    "status-badge " +
     (isPreview
-      ? "bg-amber-50 text-amber-700 border-amber-100"
-      : "bg-emerald-50 text-emerald-700 border-emerald-100");
+      ? "bg-amber-50 text-amber-700 border border-amber-100"
+      : "bg-emerald-50 text-emerald-700 border border-emerald-100");
   previewHint.classList.toggle("hidden", !isPreview);
   submitExamBtn.disabled = isPreview;
-  submitExamBtn.classList.toggle("opacity-60", isPreview);
   timerDisplay.textContent = isPreview ? "غير مفعّل" : formatSeconds(remainingSeconds);
 }
 
@@ -159,9 +152,23 @@ function renderQuestionNav() {
     progressText.textContent = total
       ? `السؤال ${currentIndex + 1} من ${total}`
       : "لا توجد أسئلة";
+    if (progressFill) {
+      progressFill.style.width = total
+        ? `${((currentIndex + 1) / total) * 100}%`
+        : "0%";
+    }
   }
   if (prevQuestionBtn) prevQuestionBtn.disabled = currentIndex === 0;
   if (nextQuestionBtn) nextQuestionBtn.disabled = currentIndex >= questions.length - 1;
+}
+
+function showAnswerNote() {
+  if (!answerNote) return;
+  answerNote.style.display = "block";
+  clearTimeout(showAnswerNote.timeoutId);
+  showAnswerNote.timeoutId = setTimeout(() => {
+    answerNote.style.display = "none";
+  }, 5000);
 }
 
 function renderOptions(q) {
@@ -171,225 +178,785 @@ function renderOptions(q) {
 
   const disableInput = mode === "preview";
 
-  const addOption = (label, value, type = "radio") => {
-    const wrapper = document.createElement("label");
-    wrapper.className =
-      "flex items-start gap-2 p-3 rounded-lg border border-slate-200 hover:border-emerald-300 transition";
-    const input = document.createElement("input");
-    input.type = type;
-    input.name = `q_${currentIndex}`;
-    input.value = value;
-    input.disabled = disableInput;
-    const isSelected =
-      type === "checkbox"
-        ? Array.isArray(answers[currentIndex]) &&
-          answers[currentIndex].includes(value)
-        : answers[currentIndex] === value;
-    input.checked = isSelected;
-    const text = document.createElement("span");
-    text.className = "text-sm text-slate-800";
-    text.textContent = label;
+  if (q.type === "multiple_choice") {
+    (q.options || []).forEach((option, index) => {
+      const optionDiv = document.createElement("div");
+      optionDiv.className = "option";
+      optionDiv.textContent = option || `اختيار ${index + 1}`;
 
-    input.addEventListener("change", () => {
-      if (type === "checkbox") {
-        const existing = Array.isArray(answers[currentIndex])
-          ? [...answers[currentIndex]]
-          : [];
-        if (input.checked) {
-          answers[currentIndex] = [...existing, value];
-        } else {
-          answers[currentIndex] = existing.filter((v) => v !== value);
-        }
-      } else {
-        answers[currentIndex] = value;
+      if (answers[currentIndex] === index) {
+        optionDiv.classList.add("selected");
       }
+
+      if (!disableInput) {
+        optionDiv.addEventListener("click", () => {
+          document.querySelectorAll(".option").forEach((el) => el.classList.remove("selected"));
+          optionDiv.classList.add("selected");
+          answers[currentIndex] = index;
+          showAnswerNote();
+        });
+      }
+
+      optionsContainer.appendChild(optionDiv);
+    });
+  } else if (q.type === "drag_drop") {
+    const dragDropDiv = document.createElement("div");
+    dragDropDiv.className = "drag-drop-container";
+
+    const instruction = document.createElement("p");
+    instruction.textContent = "اسحب العناصر وأفلتها في المنطقة أدناه بالترتيب الصحيح";
+    instruction.style.marginBottom = "15px";
+    instruction.style.fontWeight = "600";
+    dragDropDiv.appendChild(instruction);
+
+    const dragItems = document.createElement("div");
+    dragItems.className = "drag-items";
+
+    const savedAnswer = answers[currentIndex];
+    const itemsToShow = savedAnswer && Array.isArray(savedAnswer)
+      ? q.items
+      : (q.items || []).slice().sort(() => Math.random() - 0.5);
+
+    itemsToShow.forEach((item) => {
+      const dragItem = document.createElement("div");
+      dragItem.className = "drag-item";
+      dragItem.textContent = item;
+      dragItem.draggable = !disableInput;
+      dragItem.dataset.item = item;
+
+      if (!disableInput) {
+        dragItem.addEventListener("dragstart", (e) => {
+          dragItem.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", item);
+        });
+
+        dragItem.addEventListener("dragend", () => {
+          dragItem.classList.remove("dragging");
+        });
+      }
+
+      dragItems.appendChild(dragItem);
     });
 
-    wrapper.appendChild(input);
-    wrapper.appendChild(text);
-    optionsContainer.appendChild(wrapper);
-  };
+    const dropZone = document.createElement("div");
+    dropZone.className = "drop-zone";
+    dropZone.id = "dropZone";
 
-  if (["multiple_choice", "dropdown"].includes(q.type)) {
-    (q.options || []).forEach((opt, idx) => addOption(opt || `اختيار ${idx + 1}`, idx, "radio"));
-  } else if (q.type === "multiple_select") {
-    (q.options || []).forEach((opt, idx) => addOption(opt || `اختيار ${idx + 1}`, idx, "checkbox"));
-  } else if (q.type === "essay") {
-    const textarea = document.createElement("textarea");
-    textarea.className =
-      "w-full min-h-[140px] p-3 border border-slate-200 rounded-lg focus:border-emerald-400 focus:ring-emerald-100";
-    textarea.placeholder = "أدخل إجابتك هنا...";
-    textarea.disabled = disableInput;
-    textarea.value = answers[currentIndex] || "";
-    textarea.addEventListener("input", (e) => {
-      answers[currentIndex] = e.target.value;
-    });
-    optionsContainer.appendChild(textarea);
-  } else if (q.type === "ordering") {
-    // Ordering: Drag and Drop
-    const list = document.createElement("ul");
-    list.className = "space-y-2";
-    
-    // Initialize standard order if empty, otherwise use saved answer order
-    let currentOrder = Array.isArray(answers[currentIndex]) ? answers[currentIndex] : [...(q.items || [])];
-    // Shuffle if first time loading and no answer yet (optional, but good for exam)
-    if (!answers[currentIndex]) {
-        // Simple shuffle for display
-        currentOrder = [...(q.items || [])].sort(() => Math.random() - 0.5);
-    }
-
-    // Identify visually
-    currentOrder.forEach((itemText, i) => {
-        const li = document.createElement("li");
-        li.className = "p-3 bg-white border border-slate-200 rounded-lg cursor-grab active:cursor-grabbing hover:border-emerald-300 transition flex items-center justify-between shadow-sm select-none";
-        li.draggable = !disableInput;
-        li.textContent = itemText;
-        li.dataset.index = i; // visual index
+    if (savedAnswer && Array.isArray(savedAnswer)) {
+      savedAnswer.forEach((item) => {
+        const dragItem = document.createElement("div");
+        dragItem.className = "drag-item";
+        dragItem.textContent = item;
+        dragItem.draggable = !disableInput;
+        dragItem.dataset.item = item;
 
         if (!disableInput) {
-            li.addEventListener("dragstart", (e) => {
-                e.dataTransfer.setData("text/plain", i);
-                e.dataTransfer.effectAllowed = "move";
-                li.classList.add("opacity-50");
-            });
-            li.addEventListener("dragend", () => {
-                li.classList.remove("opacity-50");
-            });
-            li.addEventListener("dragover", (e) => {
-                e.preventDefault(); // allow drop
-                li.classList.add("border-emerald-500");
-            });
-            li.addEventListener("dragleave", () => {
-                li.classList.remove("border-emerald-500");
-            });
-            li.addEventListener("drop", (e) => {
-                e.preventDefault();
-                li.classList.remove("border-emerald-500");
-                const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
-                if (fromIndex === i) return;
+          dragItem.addEventListener("dragstart", (e) => {
+            dragItem.classList.add("dragging");
+            e.dataTransfer.setData("text/plain", item);
+          });
 
-                // Reorder array
-                const movedItem = currentOrder[fromIndex];
-                currentOrder.splice(fromIndex, 1);
-                currentOrder.splice(i, 0, movedItem);
-                
-                // Update answer
-                answers[currentIndex] = [...currentOrder];
-                renderOptions(q); // Re-render to show new order
-            });
+          dragItem.addEventListener("dragend", () => {
+            dragItem.classList.remove("dragging");
+          });
         }
-        list.appendChild(li);
-    });
-    // Save initial state if null
-    if (!answers[currentIndex]) answers[currentIndex] = currentOrder;
 
-    optionsContainer.appendChild(list);
-    const hint = document.createElement("p");
-    hint.className = "text-xs text-slate-500 mt-2 text-center";
-    hint.textContent = "اسحب العناصر ورتبها بالشكل الصحيح.";
-    optionsContainer.appendChild(hint);
+        dropZone.appendChild(dragItem);
+      });
+      dragItems.innerHTML = "";
+    }
 
-  } else if (q.type === "matching") {
-    // Matching: Side-by-side dropdowns or line drawing approach. 
-    // Using dropdowns for simplicity and responsiveness.
-    const wrapper = document.createElement("div");
-    wrapper.className = "space-y-4";
-    
-    const rights = q.rightColumn || [];
-    const lefts = q.leftColumn || [];
-    
-    // Initialize answer object: { "rightText": "leftText" }
-    const currentMatches = answers[currentIndex] || {};
+    if (!disableInput) {
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("drag-over");
+      });
 
-    rights.forEach((rText, idx) => {
-        const row = document.createElement("div");
-        row.className = "flex flex-col sm:flex-row items-center justify-between gap-4 p-3 bg-slate-50 rounded-lg border border-slate-200";
-        
-        const label = document.createElement("span");
-        label.className = "font-medium text-slate-800 w-full sm:w-1/2";
-        label.textContent = rText;
-        
-        const select = document.createElement("select");
-        select.className = "w-full sm:w-1/2 p-2 rounded border border-slate-300 focus:border-emerald-500 outline-none bg-white";
-        select.disabled = disableInput;
-        
-        const defOpt = document.createElement("option");
-        defOpt.textContent = "اختر الإجابة...";
-        defOpt.value = "";
-        select.appendChild(defOpt);
-        
-        lefts.forEach(lText => {
-            const opt = document.createElement("option");
-            opt.value = lText;
-            opt.textContent = lText;
-            if (currentMatches[rText] === lText) opt.selected = true;
-            select.appendChild(opt);
-        });
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("drag-over");
+      });
 
-        select.addEventListener("change", (e) => {
-             const val = e.target.value;
-             currentMatches[rText] = val;
-             answers[currentIndex] = { ...currentMatches };
-        });
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("drag-over");
 
-        row.appendChild(label);
-        row.appendChild(select);
-        wrapper.appendChild(row);
-    });
-    optionsContainer.appendChild(wrapper);
+        const draggingElement = document.querySelector(".dragging");
+        if (draggingElement) {
+          dropZone.appendChild(draggingElement);
+          updateDragDropAnswer();
+        }
+      });
 
-  } else if (q.type === "click_drag") { // Using as "Range/Slider" per teacher implementation
-    const min = (q.range && q.range[0]) || 0;
-    const max = (q.range && q.range[1]) || 10;
-    
-    const wrapper = document.createElement("div");
-    wrapper.className = "py-8 px-4";
-    
-    const rangeContainer = document.createElement("div");
-    rangeContainer.className = "relative flex items-center";
+      dragItems.addEventListener("dragover", (e) => {
+        e.preventDefault();
+      });
 
-    const input = document.createElement("input");
-    input.type = "range";
-    input.min = min;
-    input.max = max;
-    input.className = "w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600";
-    input.disabled = disableInput;
-    input.value = answers[currentIndex] !== undefined ? answers[currentIndex] : min;
+      dragItems.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const draggingElement = document.querySelector(".dragging");
+        if (draggingElement && draggingElement.parentElement.id === "dropZone") {
+          dragItems.appendChild(draggingElement);
+          updateDragDropAnswer();
+        }
+      });
+    }
 
-    const valDisplay = document.createElement("span");
-    valDisplay.className = "absolute -top-10 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-3 py-1 rounded text-sm font-bold shadow-sm transition-all";
-    valDisplay.textContent = input.value;
-    
-    // Position label dynamically
-    const updateLabel = () => {
-        const percent = ((input.value - min) / (max - min)) * 100;
-        valDisplay.style.left = `calc(${percent}% + (${8 - percent * 0.15}px))`;
-        valDisplay.textContent = input.value;
-    };
-    
-    // Initial position
-    setTimeout(updateLabel, 0);
+    function updateDragDropAnswer() {
+      const droppedItems = Array.from(dropZone.children).map((el) => el.dataset.item);
+      answers[currentIndex] = droppedItems;
+      if (droppedItems.length > 0) {
+        showAnswerNote();
+      }
+    }
 
-    input.addEventListener("input", (e) => {
-        answers[currentIndex] = Number(e.target.value);
-        updateLabel();
+    dragDropDiv.appendChild(dragItems);
+    dragDropDiv.appendChild(dropZone);
+    optionsContainer.appendChild(dragDropDiv);
+  } else if (q.type === "dropdown") {
+    const dropdownDiv = document.createElement("div");
+    dropdownDiv.className = "dropdown-container";
+
+    const select = document.createElement("select");
+    select.className = "dropdown-select";
+    select.id = "dropdownSelect";
+    select.disabled = disableInput;
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "اختر الإجابة الصحيحة";
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    select.appendChild(defaultOption);
+
+    (q.options || []).forEach((option, index) => {
+      const optionElement = document.createElement("option");
+      optionElement.value = index;
+      optionElement.textContent = option;
+      select.appendChild(optionElement);
     });
 
-    rangeContainer.appendChild(input);
-    rangeContainer.appendChild(valDisplay);
-    
+    const savedAnswer = answers[currentIndex];
+    if (savedAnswer !== null && savedAnswer !== undefined) {
+      select.value = savedAnswer;
+      select.classList.add("answered");
+    }
+
+    if (!disableInput) {
+      select.addEventListener("change", () => {
+        answers[currentIndex] = parseInt(select.value, 10);
+        select.classList.add("answered");
+        showAnswerNote();
+      });
+    }
+
+    dropdownDiv.appendChild(select);
+    optionsContainer.appendChild(dropdownDiv);
+  } else if (q.type === "click_drag") {
+    const clickDragDiv = document.createElement("div");
+    clickDragDiv.className = "click-drag-container";
+
+    const sliderContainer = document.createElement("div");
+    sliderContainer.className = "slider-container";
+
+    const instruction = document.createElement("p");
+    instruction.textContent = "اسحب المؤشر لاختيار الإجابة الصحيحة";
+    instruction.style.marginBottom = "20px";
+    instruction.style.fontWeight = "600";
+
+    const slider = document.createElement("input");
+    slider.type = "range";
+    slider.className = "slider";
+    slider.min = q.range?.[0] ?? 0;
+    slider.max = q.range?.[1] ?? 10;
+    slider.value = q.range?.[0] ?? 0;
+    slider.id = "clickDragSlider";
+    slider.disabled = disableInput;
+
+    const valueDisplay = document.createElement("div");
+    valueDisplay.className = "slider-value";
+    valueDisplay.textContent = `القيمة المختارة: ${slider.value}`;
+
     const labels = document.createElement("div");
-    labels.className = "flex justify-between text-xs text-slate-400 mt-2 font-mono";
-    labels.innerHTML = `<span>${min}</span><span>${max}</span>`;
-    
-    wrapper.appendChild(rangeContainer);
-    wrapper.appendChild(labels);
-    optionsContainer.appendChild(wrapper);
+    labels.className = "slider-labels";
+    labels.innerHTML = `<span>${slider.min}</span><span>${slider.max}</span>`;
 
+    const savedAnswer = answers[currentIndex];
+    if (savedAnswer !== null && savedAnswer !== undefined) {
+      slider.value = savedAnswer;
+      valueDisplay.textContent = `القيمة المختارة: ${savedAnswer}`;
+    }
+
+    if (!disableInput) {
+      slider.addEventListener("input", () => {
+        valueDisplay.textContent = `القيمة المختارة: ${slider.value}`;
+        answers[currentIndex] = parseInt(slider.value, 10);
+        showAnswerNote();
+      });
+    }
+
+    sliderContainer.appendChild(instruction);
+    sliderContainer.appendChild(valueDisplay);
+    sliderContainer.appendChild(slider);
+    sliderContainer.appendChild(labels);
+    clickDragDiv.appendChild(sliderContainer);
+    optionsContainer.appendChild(clickDragDiv);
+  } else if (q.type === "essay") {
+    const essayDiv = document.createElement("div");
+    essayDiv.className = "essay-container";
+
+    const instructions = document.createElement("div");
+    instructions.className = "essay-instructions";
+    instructions.innerHTML = `
+      <strong>تعليمات:</strong><br>
+      • اكتب إجابتك بوضوح ودقة<br>
+      • لا يوجد حد أدنى أو أقصى لعدد الكلمات<br>
+      • ركز على المحتوى والمعنى
+    `;
+
+    const textarea = document.createElement("textarea");
+    textarea.className = "essay-textarea";
+    textarea.placeholder = "اكتب إجابتك هنا...";
+    textarea.id = "essayTextarea";
+    textarea.disabled = disableInput;
+
+    const wordCount = document.createElement("div");
+    wordCount.className = "word-count";
+    wordCount.textContent = "عدد الكلمات: 0";
+
+    const savedAnswer = answers[currentIndex];
+    if (savedAnswer && typeof savedAnswer === "string") {
+      textarea.value = savedAnswer;
+      textarea.classList.add("answered");
+      updateWordCount();
+    }
+
+    function updateWordCount() {
+      const text = textarea.value.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      wordCount.textContent = `عدد الكلمات: ${words}`;
+      wordCount.className = "word-count valid";
+    }
+
+    if (!disableInput) {
+      textarea.addEventListener("input", () => {
+        answers[currentIndex] = textarea.value;
+        updateWordCount();
+        if (textarea.value.trim()) {
+          textarea.classList.add("answered");
+          showAnswerNote();
+        } else {
+          textarea.classList.remove("answered");
+        }
+      });
+    }
+
+    essayDiv.appendChild(instructions);
+    essayDiv.appendChild(textarea);
+    essayDiv.appendChild(wordCount);
+    optionsContainer.appendChild(essayDiv);
+  } else if (q.type === "matching") {
+    const matchingDiv = document.createElement("div");
+    matchingDiv.className = "matching-container";
+
+    const instruction = document.createElement("p");
+    instruction.textContent =
+      "انقر على عنصر من العمود الأيسر ثم على العنصر المطابق له من العمود الأيمن";
+    instruction.style.marginBottom = "20px";
+    instruction.style.fontWeight = "600";
+    instruction.style.textAlign = "center";
+
+    const columnsDiv = document.createElement("div");
+    columnsDiv.className = "matching-columns";
+    columnsDiv.style.position = "relative";
+
+    const leftColumn = document.createElement("div");
+    leftColumn.className = "matching-column";
+    leftColumn.innerHTML = "<h4>العمود الأول</h4>";
+
+    const rightColumn = document.createElement("div");
+    rightColumn.className = "matching-column";
+    rightColumn.innerHTML = "<h4>العمود الثاني</h4>";
+
+    let selectedLeft = null;
+    let matches = {};
+    const savedAnswer = answers[currentIndex];
+    if (savedAnswer && typeof savedAnswer === "object") {
+      matches = { ...savedAnswer };
+    }
+
+    const colorListLight = [
+      "#b2e0ff",
+      "#ffe6b3",
+      "#d1ffd6",
+      "#ffd6e0",
+      "#e6d6ff",
+      "#fff7b2",
+      "#b2fff7",
+      "#ffb2e0",
+      "#c6ffb2",
+      "#b2d6ff",
+      "#ffd6b2",
+      "#b2ffd6",
+      "#ffb2b2",
+      "#e0b2ff",
+      "#b2ffe0",
+      "#b2b2ff",
+    ];
+    const colorListDark = [
+      "#2e4252",
+      "#665c2e",
+      "#2e523e",
+      "#522e3a",
+      "#3a2e52",
+      "#52492e",
+      "#2e5249",
+      "#522e4a",
+      "#3a522e",
+      "#2e3a52",
+      "#52422e",
+      "#2e5242",
+      "#522e2e",
+      "#4a2e52",
+      "#2e524a",
+      "#2e2e52",
+    ];
+    const getThemeColorList = () => {
+      const body = document.body;
+      if (body.classList.contains("dark-mode") || body.classList.contains("dark-theme")) {
+        return colorListDark;
+      }
+      return colorListLight;
+    };
+    let colorList = getThemeColorList();
+    const observer = new MutationObserver(() => {
+      colorList = getThemeColorList();
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+    const pairColors = {};
+    let colorIdx = 0;
+
+    (q.leftColumn || []).forEach((item) => {
+      const leftItem = document.createElement("div");
+      leftItem.className = "matching-item";
+      leftItem.textContent = item;
+      leftItem.dataset.item = item;
+      leftItem.dataset.side = "left";
+
+      if (matches[item]) {
+        if (!pairColors[item]) {
+          pairColors[item] = colorList[colorIdx % colorList.length];
+          colorIdx += 1;
+        }
+        leftItem.style.background = pairColors[item];
+        leftItem.classList.add("matched");
+        const cancelBtn = document.createElement("button");
+        cancelBtn.textContent = "✖";
+        cancelBtn.title = "إلغاء التوصيلة";
+        cancelBtn.className = "matching-cancel-btn";
+        cancelBtn.onclick = (e) => {
+          e.stopPropagation();
+          const matchedRight = matches[item];
+          delete matches[item];
+          answers[currentIndex] = { ...matches };
+          leftItem.classList.remove("matched");
+          leftItem.style.background = "";
+          const rightEl = rightColumn.querySelector(`[data-item="${matchedRight}"]`);
+          if (rightEl) {
+            rightEl.classList.remove("matched");
+            rightEl.style.background = "";
+            const btn = rightEl.querySelector(".matching-cancel-btn");
+            if (btn) rightEl.removeChild(btn);
+          }
+          if (leftItem.querySelector(".matching-cancel-btn")) leftItem.removeChild(cancelBtn);
+        };
+        leftItem.appendChild(cancelBtn);
+      }
+
+      if (!disableInput) {
+        leftItem.addEventListener("click", () => {
+          if (matches[item]) {
+            document
+              .querySelectorAll(".matching-item")
+              .forEach((el) => el.classList.remove("matching-highlight"));
+            leftItem.classList.add("matching-highlight");
+            const matchedRight = matches[item];
+            const rightEl = rightColumn.querySelector(`[data-item="${matchedRight}"]`);
+            if (rightEl) rightEl.classList.add("matching-highlight");
+            setTimeout(() => {
+              leftItem.classList.remove("matching-highlight");
+              if (rightEl) rightEl.classList.remove("matching-highlight");
+            }, 900);
+            return;
+          }
+          document
+            .querySelectorAll('.matching-item[data-side="left"]')
+            .forEach((el) => el.classList.remove("selected"));
+          leftItem.classList.add("selected");
+          selectedLeft = item;
+        });
+      }
+
+      leftColumn.appendChild(leftItem);
+    });
+
+    (q.rightColumn || []).forEach((item) => {
+      const rightItem = document.createElement("div");
+      rightItem.className = "matching-item";
+      rightItem.textContent = item;
+      rightItem.dataset.item = item;
+      rightItem.dataset.side = "right";
+
+      const leftKey = Object.keys(matches).find((key) => matches[key] === item);
+      if (leftKey) {
+        if (!pairColors[leftKey]) {
+          pairColors[leftKey] = colorList[colorIdx % colorList.length];
+          colorIdx += 1;
+        }
+        rightItem.style.background = pairColors[leftKey];
+        rightItem.classList.add("matched");
+        const cancelBtn = document.createElement("button");
+        cancelBtn.textContent = "✖";
+        cancelBtn.title = "إلغاء التوصيلة";
+        cancelBtn.className = "matching-cancel-btn";
+        cancelBtn.onclick = (e) => {
+          e.stopPropagation();
+          delete matches[leftKey];
+          answers[currentIndex] = { ...matches };
+          rightItem.classList.remove("matched");
+          rightItem.style.background = "";
+          const leftEl = leftColumn.querySelector(`[data-item="${leftKey}"]`);
+          if (leftEl) {
+            leftEl.classList.remove("matched");
+            leftEl.style.background = "";
+            const btn = leftEl.querySelector(".matching-cancel-btn");
+            if (btn) leftEl.removeChild(btn);
+          }
+          if (rightItem.querySelector(".matching-cancel-btn")) rightItem.removeChild(cancelBtn);
+        };
+        rightItem.appendChild(cancelBtn);
+      }
+
+      if (!disableInput) {
+        rightItem.addEventListener("click", () => {
+          const currentLeftKey = Object.keys(matches).find((key) => matches[key] === item);
+          if (currentLeftKey) {
+            document
+              .querySelectorAll(".matching-item")
+              .forEach((el) => el.classList.remove("matching-highlight"));
+            rightItem.classList.add("matching-highlight");
+            const leftEl = leftColumn.querySelector(`[data-item="${currentLeftKey}"]`);
+            if (leftEl) leftEl.classList.add("matching-highlight");
+            setTimeout(() => {
+              rightItem.classList.remove("matching-highlight");
+              if (leftEl) leftEl.classList.remove("matching-highlight");
+            }, 900);
+            return;
+          }
+          if (!selectedLeft) return;
+          const alreadyMatchedLeft = Object.keys(matches).find(
+            (key) => matches[key] === item
+          );
+          if (alreadyMatchedLeft) {
+            delete matches[alreadyMatchedLeft];
+            const leftEl = leftColumn.querySelector(`[data-item="${alreadyMatchedLeft}"]`);
+            if (leftEl) {
+              leftEl.classList.remove("matched");
+              leftEl.style.background = "";
+              const btn = leftEl.querySelector(".matching-cancel-btn");
+              if (btn) leftEl.removeChild(btn);
+            }
+          }
+          matches[selectedLeft] = item;
+          answers[currentIndex] = { ...matches };
+          const leftEl = leftColumn.querySelector(`[data-item="${selectedLeft}"]`);
+          if (leftEl) {
+            leftEl.classList.add("matched");
+            leftEl.classList.remove("selected");
+            if (!pairColors[selectedLeft]) {
+              pairColors[selectedLeft] = colorList[colorIdx % colorList.length];
+              colorIdx += 1;
+            }
+            leftEl.style.background = pairColors[selectedLeft];
+            if (!leftEl.querySelector(".matching-cancel-btn")) {
+              const cancelBtn = document.createElement("button");
+              cancelBtn.textContent = "✖";
+              cancelBtn.title = "إلغاء التوصيلة";
+              cancelBtn.className = "matching-cancel-btn";
+              cancelBtn.onclick = (e) => {
+                e.stopPropagation();
+                const lKey = leftEl.dataset.item;
+                const rKey = matches[lKey];
+                if (rKey) {
+                  delete matches[lKey];
+                  answers[currentIndex] = { ...matches };
+                }
+                leftEl.classList.remove("matched");
+                leftEl.style.background = "";
+                if (rKey) {
+                  const rightEl = rightColumn.querySelector(`[data-item="${rKey}"]`);
+                  if (rightEl) {
+                    rightEl.classList.remove("matched");
+                    rightEl.style.background = "";
+                    const btn = rightEl.querySelector(".matching-cancel-btn");
+                    if (btn) rightEl.removeChild(btn);
+                  }
+                }
+                if (leftEl.querySelector(".matching-cancel-btn")) leftEl.removeChild(cancelBtn);
+              };
+              leftEl.appendChild(cancelBtn);
+            }
+          }
+          rightItem.classList.add("matched");
+          rightItem.style.background = pairColors[selectedLeft];
+          if (!rightItem.querySelector(".matching-cancel-btn")) {
+            const cancelBtn = document.createElement("button");
+            cancelBtn.textContent = "✖";
+            cancelBtn.title = "إلغاء التوصيلة";
+            cancelBtn.className = "matching-cancel-btn";
+            cancelBtn.onclick = (e) => {
+              e.stopPropagation();
+              const rKey = rightItem.dataset.item;
+              const lKey = Object.keys(matches).find((k) => matches[k] === rKey);
+              if (lKey) {
+                delete matches[lKey];
+                answers[currentIndex] = { ...matches };
+              }
+              rightItem.classList.remove("matched");
+              rightItem.style.background = "";
+              if (lKey) {
+                const leftEl = leftColumn.querySelector(`[data-item="${lKey}"]`);
+                if (leftEl) {
+                  leftEl.classList.remove("matched");
+                  leftEl.style.background = "";
+                  const btn = leftEl.querySelector(".matching-cancel-btn");
+                  if (btn) leftEl.removeChild(btn);
+                }
+              }
+              if (rightItem.querySelector(".matching-cancel-btn")) rightItem.removeChild(cancelBtn);
+            };
+            rightItem.appendChild(cancelBtn);
+          }
+          selectedLeft = null;
+          showAnswerNote();
+        });
+      }
+
+      rightColumn.appendChild(rightItem);
+    });
+
+    columnsDiv.appendChild(leftColumn);
+    columnsDiv.appendChild(rightColumn);
+
+    matchingDiv.appendChild(instruction);
+    matchingDiv.appendChild(columnsDiv);
+    optionsContainer.appendChild(matchingDiv);
+  } else if (q.type === "ordering") {
+    const orderingDiv = document.createElement("div");
+    orderingDiv.className = "ordering-container";
+
+    const instruction = document.createElement("p");
+    instruction.textContent = "اسحب العناصر لترتيبها بالتسلسل الصحيح";
+    instruction.style.marginBottom = "20px";
+    instruction.style.fontWeight = "600";
+    instruction.style.textAlign = "center";
+
+    const itemsContainer = document.createElement("div");
+    itemsContainer.className = "ordering-items";
+
+    const pinnedItem = Array.isArray(q.correctOrder) && q.correctOrder.length > 0
+      ? q.correctOrder[0]
+      : null;
+
+    const savedAnswer = answers[currentIndex];
+    let itemsToShow;
+
+    if (savedAnswer && Array.isArray(savedAnswer)) {
+      const sanitizedAnswer = pinnedItem
+        ? savedAnswer.filter((item) => item !== pinnedItem)
+        : [...savedAnswer];
+      itemsToShow = pinnedItem ? [pinnedItem, ...sanitizedAnswer] : sanitizedAnswer;
+    } else {
+      const shuffledItems = (q.items || []).slice().sort(() => Math.random() - 0.5);
+      if (pinnedItem) {
+        const withoutPinned = shuffledItems.filter((item) => item !== pinnedItem);
+        itemsToShow = [pinnedItem, ...withoutPinned];
+      } else {
+        itemsToShow = shuffledItems;
+      }
+    }
+
+    const updateOrderingNumbers = () => {
+      const items = itemsContainer.querySelectorAll(".ordering-item");
+      items.forEach((item, index) => {
+        const numberSpan = item.querySelector(".ordering-number");
+        numberSpan.textContent = index + 1;
+      });
+    };
+
+    itemsToShow.forEach((item, index) => {
+      const orderingItem = document.createElement("div");
+      orderingItem.className = "ordering-item";
+      orderingItem.dataset.item = item;
+
+      const isPinned = pinnedItem && item === pinnedItem;
+      if (!isPinned) {
+        orderingItem.draggable = !disableInput;
+      } else {
+        orderingItem.classList.add("fixed-ordering-item");
+        orderingItem.draggable = false;
+      }
+
+      const itemText = document.createElement("span");
+      itemText.textContent = item;
+
+      const numberSpan = document.createElement("span");
+      numberSpan.className = "ordering-number";
+      numberSpan.textContent = index + 1;
+
+      orderingItem.appendChild(itemText);
+      orderingItem.appendChild(numberSpan);
+
+      if (!disableInput && !isPinned) {
+        orderingItem.addEventListener("dragstart", (e) => {
+          orderingItem.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", item);
+        });
+
+        orderingItem.addEventListener("dragend", () => {
+          orderingItem.classList.remove("dragging");
+        });
+      }
+
+      itemsContainer.appendChild(orderingItem);
+    });
+
+    if (!disableInput) {
+      itemsContainer.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        const dragging = document.querySelector(".ordering-item.dragging");
+        if (!dragging) return;
+        const afterElement = getDragAfterElement(itemsContainer, e.clientY);
+        const fixedElement = itemsContainer.querySelector(".fixed-ordering-item");
+        let targetElement = afterElement;
+
+        if (fixedElement && targetElement === fixedElement) {
+          targetElement = fixedElement.nextElementSibling;
+        }
+
+        if (targetElement == null) {
+          itemsContainer.appendChild(dragging);
+        } else {
+          itemsContainer.insertBefore(dragging, targetElement);
+        }
+
+        updateOrderingNumbers();
+        updateOrderingAnswer();
+      });
+    }
+
+    function getDragAfterElement(container, y) {
+      const draggableElements = [
+        ...container.querySelectorAll(".ordering-item:not(.dragging)"),
+      ];
+
+      return draggableElements.reduce(
+        (closest, child) => {
+          const box = child.getBoundingClientRect();
+          const offset = y - box.top - box.height / 2;
+
+          if (offset < 0 && offset > closest.offset) {
+            return { offset, element: child };
+          }
+          return closest;
+        },
+        { offset: Number.NEGATIVE_INFINITY }
+      ).element;
+    }
+
+    function updateOrderingAnswer() {
+      const orderedItems = Array.from(itemsContainer.children).map(
+        (el) => el.dataset.item
+      );
+      if (pinnedItem) {
+        const filtered = orderedItems.filter((item) => item !== pinnedItem);
+        answers[currentIndex] = [pinnedItem, ...filtered];
+      } else {
+        answers[currentIndex] = orderedItems;
+      }
+      showAnswerNote();
+    }
+
+    updateOrderingNumbers();
+
+    orderingDiv.appendChild(instruction);
+    orderingDiv.appendChild(itemsContainer);
+    optionsContainer.appendChild(orderingDiv);
+  } else if (q.type === "multiple_select") {
+    const multiSelectDiv = document.createElement("div");
+    multiSelectDiv.className = "multiple-select-container";
+
+    const instructions = document.createElement("div");
+    instructions.className = "multiple-select-instructions";
+    instructions.textContent = "اختر كل ما ينطبق";
+
+    const savedAnswer = answers[currentIndex];
+    let selectedOptions = [];
+    if (savedAnswer && Array.isArray(savedAnswer)) {
+      selectedOptions = [...savedAnswer];
+    }
+
+    (q.options || []).forEach((option, index) => {
+      const optionDiv = document.createElement("div");
+      optionDiv.className = "multiple-select-option";
+
+      if (selectedOptions.includes(index)) {
+        optionDiv.classList.add("selected");
+      }
+
+      const checkbox = document.createElement("div");
+      checkbox.className = "multiple-select-checkbox";
+      if (selectedOptions.includes(index)) {
+        checkbox.textContent = "✓";
+      }
+
+      const text = document.createElement("span");
+      text.textContent = option;
+
+      optionDiv.appendChild(checkbox);
+      optionDiv.appendChild(text);
+
+      if (!disableInput) {
+        optionDiv.addEventListener("click", () => {
+          const isSelected = optionDiv.classList.contains("selected");
+
+          if (isSelected) {
+            optionDiv.classList.remove("selected");
+            checkbox.textContent = "";
+            selectedOptions = selectedOptions.filter((i) => i !== index);
+          } else {
+            optionDiv.classList.add("selected");
+            checkbox.textContent = "✓";
+            selectedOptions = [...selectedOptions, index];
+          }
+
+          answers[currentIndex] = selectedOptions;
+          if (selectedOptions.length > 0) {
+            showAnswerNote();
+          }
+        });
+      }
+
+      multiSelectDiv.appendChild(optionDiv);
+    });
+
+    optionsContainer.appendChild(instructions);
+    optionsContainer.appendChild(multiSelectDiv);
   } else {
-    // Fallback logic kept just in case
     const note = document.createElement("div");
-    note.className = "px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm";
+    note.className = "info-card";
     note.textContent = "نوع السؤال غير مدعوم.";
     optionsContainer.appendChild(note);
   }
@@ -397,29 +964,45 @@ function renderOptions(q) {
 
 function renderQuestion() {
   const q = questions[currentIndex];
-  if (!questionText || !questionMeta) return;
+  if (!questionText || !questionNumber) return;
 
   if (!q) {
     questionText.textContent = "لا توجد أسئلة متاحة لهذا الاختبار.";
-    questionMeta.textContent = "";
+    questionNumber.textContent = "";
     optionsContainer.innerHTML = "";
     renderQuestionNav();
     return;
   }
 
   questionText.textContent = q.q || "سؤال بلا نص";
-  const typeMap = {
-    multiple_choice: "اختيار من متعدد",
-    multiple_select: "اختيار متعدد",
-    dropdown: "قائمة منسدلة",
-    essay: "إجابة مقالية",
-    ordering: "ترتيب",
-    matching: "مطابقة",
-    click_drag: "سحب وإفلات",
-  };
-  questionMeta.textContent = `${typeMap[q.type] || "سؤال"} ${
-    q.level ? `• المستوى: ${q.level}` : ""
-  }`;
+  questionNumber.textContent = `السؤال ${currentIndex + 1}`;
+
+  const existingBadge = questionNumber.querySelector(".question-level-badge");
+  if (existingBadge) {
+    existingBadge.remove();
+  }
+
+  if (q.level) {
+    const levelBadge = document.createElement("span");
+    levelBadge.className = "question-level-badge";
+    levelBadge.style.cssText = `
+      display: inline-block;
+      background: #e3f2fd;
+      color: #1565c0;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin-right: 10px;
+      border: 1px solid #bbdefb;
+    `;
+    levelBadge.textContent = `مستوى: ${q.level}`;
+    questionNumber.appendChild(levelBadge);
+  }
+
+  if (answerNote) {
+    answerNote.style.display = "none";
+  }
 
   renderOptions(q);
   renderQuestionNav();
@@ -463,6 +1046,11 @@ function checkAnswer(q, ans) {
   
   if (q.type === "click_drag") {
     return Number(ans) === Number(q.correct);
+  }
+
+  if (q.type === "drag_drop") {
+    if (!Array.isArray(ans) || !Array.isArray(q.correctOrder)) return false;
+    return JSON.stringify(ans) === JSON.stringify(q.correctOrder);
   }
 
   if (q.type === "ordering") {
