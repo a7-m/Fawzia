@@ -18,7 +18,7 @@
 
   --text: #1e293b; /* Slate 800 */
   --text-rgb: 30, 41, 59;
-  --text-muted: #64748b; /* Slate 500 */
+  --text-muted: rgb(107, 105, 10); /* Slate 500 */
   --text-inverse: #ffffff;
 
   --accent: #f59e0b; /* Amber 500 */
@@ -408,14 +408,26 @@ html.dark ::placeholder {
 
 .page-subtitle {
   margin: 12px 0 6px;
-  color: white;
+  color: var(--text);
   font-size: 1.8rem;
 }
 
 .page-meta {
   margin: 0;
-  color: wheat;
+  color: var(--text-muted);
   font-size: 2rem;
+}
+
+.dark-mode .page-subtitle,
+.dark-theme .page-subtitle,
+html.dark .page-subtitle {
+  color: var(--text);
+}
+
+.dark-mode .page-meta,
+.dark-theme .page-meta,
+html.dark .page-meta {
+  color: rgba(var(--text-rgb), 0.9);
 }
 
 .hero-search {
