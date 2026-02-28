@@ -408,13 +408,13 @@ html.dark ::placeholder {
 
 .page-subtitle {
   margin: 12px 0 6px;
-  color: var(--text-muted);
+  color: white;
   font-size: 1.8rem;
 }
 
 .page-meta {
   margin: 0;
-  color: rgba(var(--text-rgb), 0.6);
+  color: wheat;
   font-size: 2rem;
 }
 
