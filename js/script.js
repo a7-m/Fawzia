@@ -842,17 +842,20 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
         // --- Dynamic Test Loading Logic (Supabase) ---
         async function fetchTestsFromFirestore() {
             try {
-                // Check if user is authenticated
+                // Allow loading public exams without login
                 const { data: { session } } = await supabase.auth.getSession();
-                if (!session) {
-                    console.log("User not authenticated, skipping exam fetch");
-                    return;
-                }
+                const isAuthed = !!session;
 
-                const { data: tests, error } = await supabase
+                let query = supabase
                     .from("exams")
                     .select("id, title, passage, subject, duration, visibility, questions")
                     .order("created_at", { ascending: false });
+
+                if (!isAuthed) {
+                    query = query.eq("visibility", "public");
+                }
+
+                const { data: tests, error } = await query;
 
                 if (error) throw error;
                 if (!tests) return;

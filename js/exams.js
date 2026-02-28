@@ -4,6 +4,13 @@ const qs = (id) => document.getElementById(id);
 const listEl = qs("examsList");
 const statusEl = qs("statusMessage");
 
+function guestUser() {
+  return {
+    isTeacher: false,
+    isAdmin: false,
+  };
+}
+
 function showStatus(msg, type = "info") {
   if (!statusEl) return;
   statusEl.textContent = msg;
@@ -211,9 +218,8 @@ async function loadExams(user) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const user = await checkAuth({ protected: true });
-    if (!user) return;
-    await loadExams(user);
+    const user = await checkAuth({ protected: false });
+    await loadExams(user || guestUser());
   } catch (err) {
     console.error(err);
     showStatus("حدث خطأ غير متوقع.", "error");

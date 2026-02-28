@@ -385,7 +385,18 @@ html.dark ::placeholder {
 }
 
 .page-header {
+  position: relative;
   text-align: center;
+}
+
+.school-logo {
+  position: absolute;
+  inset-inline-end: 24px;
+  top: 6px;
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 30px rgba(var(--shadow-color), 0.18));
 }
 
 .page-header h1 {
@@ -398,13 +409,13 @@ html.dark ::placeholder {
 .page-subtitle {
   margin: 12px 0 6px;
   color: var(--text-muted);
-  font-size: 1.12rem;
+  font-size: 1.8rem;
 }
 
 .page-meta {
   margin: 0;
   color: rgba(var(--text-rgb), 0.6);
-  font-size: 0.96rem;
+  font-size: 2rem;
 }
 
 .hero-search {
