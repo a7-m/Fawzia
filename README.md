@@ -1,4 +1,4 @@
-# 📚 منصة اختبارات تعليمية ال (PIRLS)
+# 📚 منصة اختبارات تعليمية (PIRLS)
 
 <div align="center">
   <img src="images&video/read.png" alt="شعار تعليمية" width="120" />
