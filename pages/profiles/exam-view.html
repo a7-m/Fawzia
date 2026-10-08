@@ -118,14 +118,14 @@
     </main>
 
     <!-- Modal جمع اسم الضيف -->
-    <div id="guestModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-      <div style="background:#fff; padding:2rem; border-radius:1rem; max-width:400px; width:90%; text-align:center; direction:rtl;">
-        <h2 style="margin-bottom:1rem; font-size:1.25rem; font-weight:700;">مرحباً بك في الاختبار</h2>
-        <p style="margin-bottom:1.5rem; color:#555;">أدخل اسمك (اختياري) لتظهر في النتائج</p>
-        <input id="guestNameInput" type="text" placeholder="اسمك (اختياري)" style="width:100%; padding:0.75rem; border:1px solid #ddd; border-radius:0.5rem; margin-bottom:1rem; text-align:right; font-family:inherit; font-size:1rem;" />
-        <div style="display:flex; gap:0.75rem; justify-content:center;">
-          <button id="guestStartBtn" style="background:#3b82f6; color:#fff; padding:0.75rem 2rem; border:none; border-radius:0.5rem; cursor:pointer; font-size:1rem; font-family:inherit;">ابدأ الاختبار</button>
-          <a href="../auth/login.html" style="background:#10b981; color:#fff; padding:0.75rem 2rem; border-radius:0.5rem; text-decoration:none; font-size:1rem;">تسجيل الدخول</a>
+    <div id="guestModal" class="guest-modal">
+      <div class="guest-modal-content">
+        <h2 class="guest-modal-title">مرحباً بك في الاختبار</h2>
+        <p class="guest-modal-text">أدخل اسمك (اختياري) لتظهر في النتائج</p>
+        <input id="guestNameInput" type="text" placeholder="اسمك (اختياري)" class="guest-modal-input" maxlength="100" />
+        <div class="guest-modal-actions">
+          <button id="guestStartBtn" class="guest-modal-btn guest-modal-btn-primary">ابدأ الاختبار</button>
+          <a href="../auth/login.html" class="guest-modal-btn guest-modal-btn-secondary">تسجيل الدخول</a>
         </div>
       </div>
     </div>

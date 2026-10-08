@@ -1132,13 +1132,20 @@ async function submitExam(user) {
 
     showStatus(`تم إنهاء الاختبار! درجتك التقريبية: ${scorePercentage}%`, "success");
     
-    // للمستخدمين الضيوف: عرض رسالة تشجيعية
+    // للمستخدمين الضيوف: عرض رسالة تشجيعية بسيطة مع رابط
     if (user.isGuest) {
       setTimeout(() => {
-        if (confirm(`تم إنهاء الاختبار! درجتك: ${scorePercentage}%\n\nسجّل الدخول لتتبع نتائجك وتحسين أدائك!\n\nهل تريد إنشاء حساب الآن؟`)) {
-          window.location.href = "../auth/register.html";
+        const signupPrompt = document.createElement('div');
+        signupPrompt.className = 'info-card';
+        signupPrompt.style.marginTop = '1rem';
+        signupPrompt.innerHTML = `
+          💡 <strong>نصيحة:</strong> سجّل حساباً لحفظ نتائجك ومتابعة تقدمك!
+          <a href="../auth/register.html" class="btn" style="margin-top: 0.75rem; display: inline-block;">إنشاء حساب مجاناً</a>
+        `;
+        if (statusEl && statusEl.parentElement) {
+          statusEl.parentElement.appendChild(signupPrompt);
         }
-      }, 1500);
+      }, 1000);
     } else {
       // للمستخدمين المسجلين: التوجيه إلى صفحة النتائج
       setTimeout(() => {
@@ -1258,6 +1265,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+// دالة تنظيف وتعقيم الإدخال من HTML/JavaScript
+function sanitizeInput(input) {
+  if (!input) return "";
+  // إزالة علامات HTML والأحرف الخاصة الخطرة
+  return input
+    .trim()
+    .replace(/[<>]/g, "") // إزالة < و >
+    .replace(/javascript:/gi, "") // إزالة javascript:
+    .replace(/on\w+\s*=/gi, "") // إزالة event handlers مثل onclick=
+    .substring(0, 100); // تحديد الطول الأقصى
+}
+
 // دالة عرض modal جمع اسم الضيف
 function showGuestNameModal() {
   return new Promise((resolve) => {
@@ -1274,7 +1293,8 @@ function showGuestNameModal() {
     modal.style.display = "flex";
 
     const handleStart = () => {
-      const guestName = input.value.trim();
+      const rawName = input.value.trim();
+      const guestName = sanitizeInput(rawName); // تنظيف الإدخال
       modal.style.display = "none";
       startBtn.removeEventListener("click", handleStart);
       resolve(guestName || "ضيف");
