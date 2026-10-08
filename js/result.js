@@ -112,7 +112,7 @@ async function fetchResult(attemptId, currentUser) {
   const { data: attempt, error: attemptError } = await supabase
     .from("attempts")
     .select(
-      "id, user_id, exam_id, subject, level, score_percentage, correct_count, incorrect_count, time_spent_seconds, created_at, answers, student_name"
+      "id, user_id, exam_id, subject, level, score_percentage, correct_count, incorrect_count, time_spent_seconds, created_at, answers, student_name, class"
     )
     .eq("id", attemptId)
     .single();
@@ -122,8 +122,13 @@ async function fetchResult(attemptId, currentUser) {
   }
 
   // Basic authorization (RLS already enforces; this is UX guard)
-  if (!currentUser.isTeacher && attempt.user_id !== currentUser.uid) {
-    throw new Error("غير مسموح لك بعرض هذه النتيجة.");
+  // السماح للمعلم والأدمن بمشاهدة جميع النتائج
+  // والطالب يرى نتائجه فقط
+  if (!currentUser.isAdmin && !currentUser.isTeacher) {
+    // إذا كان طالباً، تحقق أن النتيجة له
+    if (attempt.user_id && attempt.user_id !== currentUser.uid) {
+      throw new Error("غير مسموح لك بعرض هذه النتيجة.");
+    }
   }
 
   // Fetch exam
@@ -182,13 +187,16 @@ function fillExamSection(exam, attempt) {
 
 function fillStudentSection(profile, attempt) {
   const nameEl = qs("studentName");
-  if (nameEl) nameEl.textContent = profile?.name || attempt.student_name || "—";
+  // إذا كان ضيفاً، استخدم student_name من attempts
+  const isGuest = !attempt.user_id;
+  if (nameEl) nameEl.textContent = isGuest ? (attempt.student_name || "ضيف") : (profile?.name || attempt.student_name || "—");
   
   const classEl = qs("studentClass");
-  if (classEl) classEl.textContent = profile?.class || "—";
+  // إذا كان ضيفاً، استخدم class من attempts
+  if (classEl) classEl.textContent = isGuest ? (attempt.class || "—") : (profile?.class || attempt.class || "—");
   
   const numberEl = qs("studentNumber");
-  if (numberEl) numberEl.textContent = profile?.student_number || "—";
+  if (numberEl) numberEl.textContent = isGuest ? "—" : (profile?.student_number || "—");
   
   const dateEl = qs("attemptDate");
   if (dateEl) dateEl.textContent = formatDate(attempt.created_at);
