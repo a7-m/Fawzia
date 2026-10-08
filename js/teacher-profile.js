@@ -127,7 +127,7 @@ async function loadResults() {
 
   const { data, error } = await supabase
     .from("attempts")
-    .select("user_id, score_percentage, created_at")
+    .select("user_id, score_percentage, created_at, student_name, class")
     .in("user_id", studentIds)
     .order("created_at", { ascending: false });
 
@@ -143,11 +143,15 @@ async function loadResults() {
 
   (data || []).forEach((a, idx) => {
     const student = map.get(a.user_id) || {};
+    // استخدام البيانات من attempts إذا كانت متاحة (للضيوف)
+    const displayName = student.name || a.student_name || `محاولة ${idx + 1}`;
+    const displayClass = student.class || a.class || "-";
+    
     const tr = document.createElement("tr");
     tr.className = "border-b border-slate-100";
     tr.innerHTML = `
-      <td class="px-3 py-2">${student.name || `محاولة ${idx + 1}`}</td>
-      <td class="px-3 py-2">${student.class || "-"}</td>
+      <td class="px-3 py-2">${displayName}</td>
+      <td class="px-3 py-2">${displayClass}</td>
       <td class="px-3 py-2">${student.student_number || "-"}</td>
       <td class="px-3 py-2">${typeof a.score_percentage === "number" ? a.score_percentage + "%" : "-"}</td>
       <td class="px-3 py-2">${a.created_at ? new Date(a.created_at).toLocaleString("ar-EG") : "-"}</td>

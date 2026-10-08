@@ -277,7 +277,7 @@ async function loadResultsTable() {
 
   const { data: attempts, error } = await supabase
     .from("attempts")
-    .select("user_id, score_percentage, created_at, exam_id, subject, level, student_name")
+    .select("user_id, score_percentage, created_at, exam_id, subject, level, student_name, class")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -297,12 +297,21 @@ async function loadResultsTable() {
 
   (attempts || []).forEach((a) => {
     const student = map.get(a.user_id) || {};
+    // إذا كان ضيفاً (user_id === null)، استخدم البيانات من attempts مباشرة
+    const isGuest = !a.user_id;
+    const displayName = isGuest ? (a.student_name || "ضيف") : (student.name || a.student_name || "-");
+    const displayClass = isGuest ? (a.class || "-") : (student.class || a.class || "-");
+    const displayNumber = isGuest ? "-" : (student.student_number || "-");
+    
     const tr = document.createElement("tr");
     tr.className = "border-b border-slate-100";
+    if (isGuest) {
+      tr.style.background = "rgba(var(--primary-rgb), 0.05)"; // تمييز الضيوف
+    }
     tr.innerHTML = `
-      <td class="px-3 py-2">${student.name || a.student_name || "-"}</td>
-      <td class="px-3 py-2">${student.class || "-"}</td>
-      <td class="px-3 py-2">${student.student_number || "-"}</td>
+      <td class="px-3 py-2">${displayName}${isGuest ? ' 👤' : ''}</td>
+      <td class="px-3 py-2">${displayClass}</td>
+      <td class="px-3 py-2">${displayNumber}</td>
       <td class="px-3 py-2">${a.subject || "-"}</td>
       <td class="px-3 py-2">${a.level || "-"}</td>
       <td class="px-3 py-2">${typeof a.score_percentage === "number" ? a.score_percentage + "%" : "-"}</td>

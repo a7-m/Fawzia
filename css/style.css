@@ -1768,3 +1768,243 @@ body,
     width: 100%;
   }
 }
+
+
+/* Hero Primary Button - زر "طوّر نفسك" الكبير */
+.btn-hero-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem 3rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(var(--primary-rgb), 0.3);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  min-width: 280px;
+}
+
+.btn-hero-primary:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(var(--primary-rgb), 0.4);
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
+}
+
+.btn-hero-primary:active {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.35);
+}
+
+/* Dark mode support */
+.dark-mode .btn-hero-primary,
+.dark-theme .btn-hero-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  box-shadow: 0 10px 30px rgba(var(--primary-rgb), 0.5);
+}
+
+/* Responsive Design Enhancements - تحسينات التصميم المتجاوب */
+
+/* Mobile First - الموبايل أولاً */
+@media (max-width: 480px) {
+  .btn-hero-primary {
+    padding: 1.25rem 2rem;
+    font-size: 1.4rem;
+    min-width: 100%;
+    width: 100%;
+  }
+  
+  .hero-card {
+    padding: 1.5rem;
+  }
+  
+  .hero-card h2 {
+    font-size: 1.4rem;
+  }
+  
+  .hero-card p {
+    font-size: 0.95rem;
+  }
+  
+  .hero-search {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .search-input {
+    width: 100%;
+  }
+  
+  .btn-search {
+    width: 100%;
+  }
+  
+  .school-logo {
+    max-width: 100px;
+    height: auto;
+  }
+  
+  #schoolName {
+    font-size: 1.3rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* Small Tablets - التابلت الصغير */
+@media (min-width: 481px) and (max-width: 768px) {
+  .btn-hero-primary {
+    padding: 1.35rem 2.5rem;
+    font-size: 1.5rem;
+    min-width: 260px;
+  }
+  
+  .hero-card {
+    padding: 2rem;
+  }
+  
+  .hero-card h2 {
+    font-size: 1.6rem;
+  }
+  
+  .school-logo {
+    max-width: 120px;
+    height: auto;
+  }
+}
+
+/* Large Tablets and Small Laptops - التابلت الكبير واللابتوب الصغير */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .btn-hero-primary {
+    padding: 1.4rem 2.75rem;
+    font-size: 1.6rem;
+  }
+  
+  .container {
+    max-width: 90%;
+  }
+}
+
+/* Desktop - الحواسيب المكتبية */
+@media (min-width: 1025px) {
+  .btn-hero-primary {
+    padding: 1.5rem 3rem;
+    font-size: 1.75rem;
+  }
+  
+  .container {
+    max-width: 1200px;
+  }
+}
+
+/* Large Screens - الشاشات الكبيرة */
+@media (min-width: 1440px) {
+  .btn-hero-primary {
+    padding: 1.6rem 3.5rem;
+    font-size: 1.9rem;
+  }
+  
+  .hero-card {
+    padding: 3rem;
+  }
+  
+  .hero-card h2 {
+    font-size: 2.2rem;
+  }
+}
+
+/* Ultra Wide Screens - الشاشات فائقة العرض */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  .btn-hero-primary {
+    padding: 1.75rem 4rem;
+    font-size: 2rem;
+  }
+}
+
+/* Landscape Mobile - الموبايل الأفقي */
+@media (max-width: 768px) and (orientation: landscape) {
+  .btn-hero-primary {
+    padding: 1rem 2rem;
+    font-size: 1.3rem;
+  }
+  
+  .hero-card {
+    padding: 1.25rem;
+  }
+  
+  .school-logo {
+    max-width: 80px;
+  }
+}
+
+/* Print Styles - أنماط الطباعة */
+@media print {
+  .btn-hero-primary,
+  .hero-search,
+  .main-nav,
+  .theme-toggle-container {
+    display: none;
+  }
+  
+  .hero-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+/* High DPI Displays - شاشات عالية الكثافة */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .school-logo,
+  .brand-mark {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Reduced Motion - تقليل الحركة للمستخدمين الحساسين */
+@media (prefers-reduced-motion: reduce) {
+  .btn-hero-primary,
+  .score-circle,
+  .result-stat {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Touch Device Optimizations - تحسينات أجهزة اللمس */
+@media (hover: none) and (pointer: coarse) {
+  .btn-hero-primary {
+    padding: 1.4rem 2.5rem;
+    font-size: 1.6rem;
+    /* زيادة منطقة اللمس */
+    min-height: 64px;
+  }
+  
+  .btn,
+  .nav-link {
+    min-height: 48px;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+/* Guest Indicator - مؤشر الضيف في الجداول */
+.guest-row {
+  background: rgba(var(--primary-rgb), 0.05);
+  border-right: 3px solid var(--primary);
+}
+
+.dark-mode .guest-row,
+.dark-theme .guest-row {
+  background: rgba(var(--primary-rgb), 0.1);
+}
