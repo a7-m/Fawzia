@@ -841,8 +841,9 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
 
         // --- Dynamic Test Loading Logic (Supabase) ---
         async function fetchTestsFromFirestore() {
+            const select = document.getElementById('levelSelect');
             try {
-                // Allow loading public exams without login
+                // Always fetch public exams — available to everyone (logged in or not)
                 const { data: { session } } = await supabase.auth.getSession();
                 const isAuthed = !!session;
 
@@ -851,6 +852,8 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
                     .select("id, title, passage, subject, duration, visibility, questions")
                     .order("created_at", { ascending: false });
 
+                // Unauthenticated users see only public exams;
+                // authenticated users see all exams they have access to.
                 if (!isAuthed) {
                     query = query.eq("visibility", "public");
                 }
@@ -858,31 +861,68 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
                 const { data: tests, error } = await query;
 
                 if (error) throw error;
-                if (!tests) return;
-                
+
+                // Rebuild the select from scratch with all DB exams
+                const previousLevel = currentTest.level || '';
+                populateLevelSelect(tests || [], previousLevel);
+
+                if (!tests || tests.length === 0) return;
+
                 tests.forEach((data) => {
                     const subject = data.subject || "لغة عربية";
                     const title = data.title;
                     const qList = safeParseQuestions(data.questions);
-                    
-                    // Add to global questions object
+
                     if (!questions[subject]) {
                         questions[subject] = {};
                     }
-                    
+
                     if (!window.dynamicPassages) window.dynamicPassages = {};
                     window.dynamicPassages[title] = data.passage;
-                    
-                    // Add questions
-                    questions[subject][title] = qList;
 
-                    // Also need to update the options in the select dropdown
-                    updateLevelSelect(title);
+                    questions[subject][title] = qList;
                 });
-                
-                console.log("Tests loaded من Supabase");
+
+                console.log("Tests loaded من Supabase:", (tests || []).length);
             } catch (e) {
                 console.error("Error loading tests: ", e);
+                // On error, show a fallback message in the select
+                if (select) {
+                    select.innerHTML = '<option value="">تعذّر تحميل الاختبارات</option>';
+                }
+            }
+        }
+
+        /**
+         * Rebuild #levelSelect from an array of exam objects.
+         * Tries to restore the previously selected value if it still exists.
+         */
+        function populateLevelSelect(exams, selectedValue) {
+            const select = document.getElementById('levelSelect');
+            if (!select) return;
+
+            // Clear existing options
+            select.innerHTML = '';
+
+            // Default placeholder
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = exams.length > 0
+                ? 'اضغط لاختيار الفقرة'
+                : 'لا توجد اختبارات متاحة حالياً';
+            select.appendChild(placeholder);
+
+            exams.forEach((exam) => {
+                if (!exam.title) return;
+                const opt = document.createElement('option');
+                opt.value = exam.title;
+                opt.textContent = exam.title;
+                select.appendChild(opt);
+            });
+
+            // Restore previous selection if it still exists
+            if (selectedValue) {
+                select.value = selectedValue;
             }
         }
 
@@ -897,7 +937,7 @@ const readingPassage4 = `سِرُّ السِّنِّ العِمْلَاقَةِ 
                         break;
                     }
                 }
-                
+
                 if (!exists) {
                     const opt = document.createElement('option');
                     opt.value = newTitle;
