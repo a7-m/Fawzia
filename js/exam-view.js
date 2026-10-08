@@ -1114,7 +1114,7 @@ async function submitExam(user) {
 
   try {
     const payload = {
-      user_id: user.uid || user.id,
+      user_id: user.isGuest ? null : (user.uid || user.id),
       exam_id: examData.id,
       subject: examData.subject,
       level: examData.title, // using title as level descriptor roughly
@@ -1123,7 +1123,7 @@ async function submitExam(user) {
       incorrect_count: incorrectCount,
       time_spent_seconds: Math.max(timeSpent, 0),
       answers: answers,
-      student_name: user.full_name || user.email
+      student_name: user.full_name || user.name || user.email || "ضيف"
     };
 
     const { error } = await supabase.from("attempts").insert(payload);
@@ -1131,9 +1131,20 @@ async function submitExam(user) {
     if (error) throw error;
 
     showStatus(`تم إنهاء الاختبار! درجتك التقريبية: ${scorePercentage}%`, "success");
-    setTimeout(() => {
+    
+    // للمستخدمين الضيوف: عرض رسالة تشجيعية
+    if (user.isGuest) {
+      setTimeout(() => {
+        if (confirm(`تم إنهاء الاختبار! درجتك: ${scorePercentage}%\n\nسجّل الدخول لتتبع نتائجك وتحسين أدائك!\n\nهل تريد إنشاء حساب الآن؟`)) {
+          window.location.href = "../auth/register.html";
+        }
+      }, 1500);
+    } else {
+      // للمستخدمين المسجلين: التوجيه إلى صفحة النتائج
+      setTimeout(() => {
         window.location.href = "student.html#resultsTableBody";
-    }, 2000);
+      }, 2000);
+    }
 
   } catch (err) {
     console.error(err);
@@ -1207,8 +1218,8 @@ async function loadExam(examId, user) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const user = await checkAuth({ protected: true });
-    if (!user) return;
+    const user = await checkAuth({ protected: false });
+    const isGuest = !user;
 
     const params = new URLSearchParams(window.location.search);
     const examId = params.get("exam_id");
@@ -1219,9 +1230,63 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    await loadExam(examId, user);
+    // إذا كان ضيفاً ووضع المعاينة: منع الوصول
+    if (isGuest && mode === "preview") {
+      showStatus("وضع المعاينة متاح للمعلمين فقط", "error");
+      return;
+    }
+
+    // إذا كان ضيفاً ووضع التشغيل: اعرض modal لجمع الاسم
+    if (isGuest && mode === "run") {
+      const guestName = await showGuestNameModal();
+      const guestUser = {
+        uid: null,
+        email: null,
+        name: guestName || "ضيف",
+        full_name: guestName || "ضيف",
+        isGuest: true,
+        isTeacher: false
+      };
+      await loadExam(examId, guestUser);
+    } else {
+      // مستخدم مسجل
+      await loadExam(examId, user);
+    }
   } catch (err) {
     console.error(err);
     showStatus("حدث خطأ غير متوقع.", "error");
   }
 });
+
+// دالة عرض modal جمع اسم الضيف
+function showGuestNameModal() {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("guestModal");
+    const input = document.getElementById("guestNameInput");
+    const startBtn = document.getElementById("guestStartBtn");
+
+    if (!modal || !input || !startBtn) {
+      console.warn("Guest modal elements not found");
+      resolve("ضيف");
+      return;
+    }
+
+    modal.style.display = "flex";
+
+    const handleStart = () => {
+      const guestName = input.value.trim();
+      modal.style.display = "none";
+      startBtn.removeEventListener("click", handleStart);
+      resolve(guestName || "ضيف");
+    };
+
+    startBtn.addEventListener("click", handleStart);
+
+    // السماح بالضغط على Enter
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        handleStart();
+      }
+    });
+  });
+}
