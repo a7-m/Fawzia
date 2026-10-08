@@ -1123,34 +1123,85 @@ async function submitExam(user) {
       incorrect_count: incorrectCount,
       time_spent_seconds: Math.max(timeSpent, 0),
       answers: answers,
-      student_name: user.full_name || user.name || user.email || "ضيف"
+      student_name: user.full_name || user.name || user.email || "ضيف",
+      class: user.class || null
     };
 
     const { error } = await supabase.from("attempts").insert(payload);
 
     if (error) throw error;
 
-    showStatus(`تم إنهاء الاختبار! درجتك التقريبية: ${scorePercentage}%`, "success");
+    // إخفاء الاختبار وعرض النتيجة التفصيلية
+    if (examContainer) examContainer.classList.add("hidden");
     
-    // للمستخدمين الضيوف: عرض رسالة تشجيعية بسيطة مع رابط
-    if (user.isGuest) {
-      setTimeout(() => {
-        const signupPrompt = document.createElement('div');
-        signupPrompt.className = 'info-card';
-        signupPrompt.style.marginTop = '1rem';
-        signupPrompt.innerHTML = `
-          💡 <strong>نصيحة:</strong> سجّل حساباً لحفظ نتائجك ومتابعة تقدمك!
-          <a href="../auth/register.html" class="btn" style="margin-top: 0.75rem; display: inline-block;">إنشاء حساب مجاناً</a>
-        `;
-        if (statusEl && statusEl.parentElement) {
-          statusEl.parentElement.appendChild(signupPrompt);
-        }
-      }, 1000);
-    } else {
-      // للمستخدمين المسجلين: التوجيه إلى صفحة النتائج
-      setTimeout(() => {
-        window.location.href = "student.html#resultsTableBody";
-      }, 2000);
+    // إنشاء صفحة النتيجة
+    const resultContainer = document.createElement('div');
+    resultContainer.className = 'result-container';
+    resultContainer.innerHTML = `
+      <div class="result-card">
+        <div class="result-header">
+          <h2 class="result-title">🎉 تم إنهاء الاختبار بنجاح!</h2>
+        </div>
+        
+        <div class="result-score">
+          <div class="score-circle">
+            <span class="score-value">${scorePercentage}%</span>
+          </div>
+          <p class="score-label">درجتك النهائية</p>
+        </div>
+
+        <div class="result-details">
+          <div class="result-stat">
+            <span class="stat-icon">✅</span>
+            <div class="stat-content">
+              <span class="stat-label">إجابات صحيحة</span>
+              <span class="stat-value">${correctCount}</span>
+            </div>
+          </div>
+          
+          <div class="result-stat">
+            <span class="stat-icon">❌</span>
+            <div class="stat-content">
+              <span class="stat-label">إجابات خاطئة</span>
+              <span class="stat-value">${incorrectCount}</span>
+            </div>
+          </div>
+          
+          <div class="result-stat">
+            <span class="stat-icon">📝</span>
+            <div class="stat-content">
+              <span class="stat-label">إجمالي الأسئلة</span>
+              <span class="stat-value">${totalAutoGradable}</span>
+            </div>
+          </div>
+          
+          <div class="result-stat">
+            <span class="stat-icon">⏱️</span>
+            <div class="stat-content">
+              <span class="stat-label">الوقت المستغرق</span>
+              <span class="stat-value">${formatSeconds(timeSpent)}</span>
+            </div>
+          </div>
+        </div>
+
+        ${user.isGuest ? `
+          <div class="result-guest-prompt">
+            <p>💡 <strong>نصيحة:</strong> سجّل حساباً لحفظ نتائجك ومتابعة تقدمك!</p>
+            <a href="../auth/login.html" class="btn btn-primary">إنشاء حساب مجاناً</a>
+          </div>
+        ` : ''}
+
+        <div class="result-actions">
+          <a href="../../index.html" class="btn btn-secondary">العودة للرئيسية</a>
+          ${!user.isGuest ? '<a href="student.html" class="btn">عرض جميع نتائجي</a>' : ''}
+        </div>
+      </div>
+    `;
+    
+    // إضافة صفحة النتيجة
+    const mainContainer = document.querySelector('.page-container');
+    if (mainContainer) {
+      mainContainer.appendChild(resultContainer);
     }
 
   } catch (err) {
@@ -1243,14 +1294,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // إذا كان ضيفاً ووضع التشغيل: اعرض modal لجمع الاسم
+    // إذا كان ضيفاً ووضع التشغيل: اعرض modal لجمع الاسم والصف
     if (isGuest && mode === "run") {
-      const guestName = await showGuestNameModal();
+      const guestData = await showGuestNameModal();
       const guestUser = {
         uid: null,
         email: null,
-        name: guestName || "ضيف",
-        full_name: guestName || "ضيف",
+        name: guestData.name || "ضيف",
+        full_name: guestData.name || "ضيف",
+        class: guestData.class || "",
         isGuest: true,
         isTeacher: false
       };
@@ -1281,32 +1333,40 @@ function sanitizeInput(input) {
 function showGuestNameModal() {
   return new Promise((resolve) => {
     const modal = document.getElementById("guestModal");
-    const input = document.getElementById("guestNameInput");
+    const nameInput = document.getElementById("guestNameInput");
+    const classInput = document.getElementById("guestClassInput");
     const startBtn = document.getElementById("guestStartBtn");
 
-    if (!modal || !input || !startBtn) {
+    if (!modal || !nameInput || !classInput || !startBtn) {
       console.warn("Guest modal elements not found");
-      resolve("ضيف");
+      resolve({ name: "ضيف", class: "" });
       return;
     }
 
     modal.style.display = "flex";
 
     const handleStart = () => {
-      const rawName = input.value.trim();
+      const rawName = nameInput.value.trim();
+      const rawClass = classInput.value.trim();
       const guestName = sanitizeInput(rawName); // تنظيف الإدخال
+      const guestClass = sanitizeInput(rawClass); // تنظيف الإدخال
       modal.style.display = "none";
       startBtn.removeEventListener("click", handleStart);
-      resolve(guestName || "ضيف");
+      resolve({ 
+        name: guestName || "ضيف",
+        class: guestClass || ""
+      });
     };
 
     startBtn.addEventListener("click", handleStart);
 
-    // السماح بالضغط على Enter
-    input.addEventListener("keypress", (e) => {
+    // السماح بالضغط على Enter في أي حقل
+    const handleKeyPress = (e) => {
       if (e.key === "Enter") {
         handleStart();
       }
-    });
+    };
+    nameInput.addEventListener("keypress", handleKeyPress);
+    classInput.addEventListener("keypress", handleKeyPress);
   });
 }
