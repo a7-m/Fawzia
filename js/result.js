@@ -121,15 +121,8 @@ async function fetchResult(attemptId, currentUser) {
     throw new Error("تعذر تحميل المحاولة أو غير موجودة.");
   }
 
-  // Basic authorization (RLS already enforces; this is UX guard)
-  // السماح للمعلم والأدمن بمشاهدة جميع النتائج
-  // والطالب يرى نتائجه فقط
-  if (!currentUser.isAdmin && !currentUser.isTeacher) {
-    // إذا كان طالباً، تحقق أن النتيجة له
-    if (attempt.user_id && attempt.user_id !== currentUser.uid) {
-      throw new Error("غير مسموح لك بعرض هذه النتيجة.");
-    }
-  }
+  // السماح للجميع بمشاهدة النتائج التفصيلية (المعلمين، الأدمن، الطلاب، الضيوف)
+  // لا توجد قيود على العرض
 
   // Fetch exam
   let exam = null;
@@ -288,8 +281,8 @@ function setupPrint() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const user = await checkAuth({ protected: true }); // ensures session
-    if (!user) return;
+    // السماح للضيوف والمسجلين بمشاهدة النتائج
+    const user = await checkAuth({ protected: false });
 
     const params = new URLSearchParams(window.location.search);
     const attemptId = params.get("attempt_id");

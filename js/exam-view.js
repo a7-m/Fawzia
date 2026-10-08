@@ -158,8 +158,24 @@ function renderQuestionNav() {
         : "0%";
     }
   }
+  
+  // تحديث أزرار التنقل
   if (prevQuestionBtn) prevQuestionBtn.disabled = currentIndex === 0;
-  if (nextQuestionBtn) nextQuestionBtn.disabled = currentIndex >= questions.length - 1;
+  
+  // تحديث زر التالي/التسليم
+  const isLastQuestion = currentIndex >= questions.length - 1;
+  if (nextQuestionBtn) {
+    if (isLastQuestion) {
+      nextQuestionBtn.textContent = "تسليم الاختبار";
+      nextQuestionBtn.classList.add("btn-primary");
+      nextQuestionBtn.classList.remove("btn");
+    } else {
+      nextQuestionBtn.textContent = "التالي";
+      nextQuestionBtn.classList.remove("btn-primary");
+      nextQuestionBtn.classList.add("btn");
+    }
+    nextQuestionBtn.disabled = false;
+  }
 }
 
 function showAnswerNote() {
@@ -1071,7 +1087,11 @@ function checkAnswer(q, ans) {
     return true;
   }
 
-  // Essay is manual grading -> always false here (or 'needs review')
+  // Essay: إذا أجاب الطالب (أي نص)، تُعتبر الإجابة صحيحة
+  if (q.type === "essay") {
+    return ans && typeof ans === "string" && ans.trim().length > 0;
+  }
+
   return false; 
 }
 
@@ -1093,20 +1113,14 @@ async function submitExam(user) {
   let incorrectCount = 0;
   
   questions.forEach((q, idx) => {
-    // Skip essay for auto-grade count, specific logic needed
-    if (q.type === "essay") {
-       // Essay is not auto-graded here
-       return;
-    }
-    
     const isCorrect = checkAnswer(q, answers[idx]);
     if (isCorrect) correctCount++;
     else incorrectCount++;
   });
 
-  const totalAutoGradable = questions.filter(q => q.type !== "essay").length;
-  const scorePercentage = totalAutoGradable > 0 
-    ? Math.round((correctCount / totalAutoGradable) * 100) 
+  const totalQuestions = questions.length;
+  const scorePercentage = totalQuestions > 0 
+    ? Math.round((correctCount / totalQuestions) * 100) 
     : 0;
     
   // Time spent
@@ -1117,7 +1131,7 @@ async function submitExam(user) {
       user_id: user.isGuest ? null : (user.uid || user.id),
       exam_id: examData.id,
       subject: examData.subject,
-      level: examData.title, // using title as level descriptor roughly
+      level: examData.title,
       score_percentage: scorePercentage,
       correct_count: correctCount,
       incorrect_count: incorrectCount,
@@ -1127,82 +1141,19 @@ async function submitExam(user) {
       class: user.class || null
     };
 
-    const { error } = await supabase.from("attempts").insert(payload);
+    const { data: insertedData, error } = await supabase
+      .from("attempts")
+      .insert(payload)
+      .select()
+      .single();
 
     if (error) throw error;
 
-    // إخفاء الاختبار وعرض النتيجة التفصيلية
+    // إخفاء الاختبار
     if (examContainer) examContainer.classList.add("hidden");
     
-    // إنشاء صفحة النتيجة
-    const resultContainer = document.createElement('div');
-    resultContainer.className = 'result-container';
-    resultContainer.innerHTML = `
-      <div class="result-card">
-        <div class="result-header">
-          <h2 class="result-title">🎉 تم إنهاء الاختبار بنجاح!</h2>
-        </div>
-        
-        <div class="result-score">
-          <div class="score-circle">
-            <span class="score-value">${scorePercentage}%</span>
-          </div>
-          <p class="score-label">درجتك النهائية</p>
-        </div>
-
-        <div class="result-details">
-          <div class="result-stat">
-            <span class="stat-icon">✅</span>
-            <div class="stat-content">
-              <span class="stat-label">إجابات صحيحة</span>
-              <span class="stat-value">${correctCount}</span>
-            </div>
-          </div>
-          
-          <div class="result-stat">
-            <span class="stat-icon">❌</span>
-            <div class="stat-content">
-              <span class="stat-label">إجابات خاطئة</span>
-              <span class="stat-value">${incorrectCount}</span>
-            </div>
-          </div>
-          
-          <div class="result-stat">
-            <span class="stat-icon">📝</span>
-            <div class="stat-content">
-              <span class="stat-label">إجمالي الأسئلة</span>
-              <span class="stat-value">${totalAutoGradable}</span>
-            </div>
-          </div>
-          
-          <div class="result-stat">
-            <span class="stat-icon">⏱️</span>
-            <div class="stat-content">
-              <span class="stat-label">الوقت المستغرق</span>
-              <span class="stat-value">${formatSeconds(timeSpent)}</span>
-            </div>
-          </div>
-        </div>
-
-        ${user.isGuest ? `
-          <div class="result-guest-prompt">
-            <p>💡 <strong>نصيحة:</strong> سجّل حساباً لحفظ نتائجك ومتابعة تقدمك!</p>
-            <a href="../auth/login.html" class="btn btn-primary">إنشاء حساب مجاناً</a>
-          </div>
-        ` : ''}
-
-        <div class="result-actions">
-          <a href="../../index.html" class="btn btn-secondary">العودة للرئيسية</a>
-          ${!user.isGuest ? '<a href="student.html" class="btn">عرض جميع نتائجي</a>' : ''}
-        </div>
-      </div>
-    `;
-    
-    // إضافة صفحة النتيجة
-    const mainContainer = document.querySelector('.page-container');
-    if (mainContainer) {
-      mainContainer.appendChild(resultContainer);
-    }
+    // الانتقال إلى صفحة النتيجة التفصيلية
+    window.location.href = `result-view.html?attempt_id=${insertedData.id}`;
 
   } catch (err) {
     console.error(err);
@@ -1221,20 +1172,27 @@ function bindNavigation(user) {
       }
     });
   }
+  
   if (nextQuestionBtn) {
     nextQuestionBtn.addEventListener("click", () => {
-      if (currentIndex < questions.length - 1) {
+      const isLastQuestion = currentIndex >= questions.length - 1;
+      
+      if (isLastQuestion) {
+        // في آخر سؤال: تسليم الاختبار
+        if (confirm("هل أنت متأكد من إنهاء الاختبار وتسليم الإجابة؟")) {
+          submitExam(user);
+        }
+      } else {
+        // الانتقال للسؤال التالي
         currentIndex++;
         renderQuestion();
       }
     });
   }
+  
+  // إخفاء زر "إنهاء الاختبار وتسليم الإجابة" القديم
   if (submitExamBtn) {
-    submitExamBtn.addEventListener("click", () => {
-        if (confirm("هل أنت متأكد من إنهاء الاختبار وتسليم الإجابة؟")) {
-            submitExam(user);
-        }
-    });
+    submitExamBtn.style.display = "none";
   }
 }
 
