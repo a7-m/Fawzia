@@ -60,7 +60,7 @@ async function generateReport(days = 30) {
     const [attemptsResult, profilesResult] = await Promise.all([
       supabase
         .from("attempts")
-        .select("id, user_id, subject, level, score_percentage, created_at")
+        .select("id, user_id, subject, level, score_percentage, created_at, student_name, class")
         .gte("created_at", sinceISO)
         .order("created_at", { ascending: true }),
       supabase
@@ -112,7 +112,18 @@ async function generateReport(days = 30) {
 // ============================================================
 function computeStats(attempts) {
   const total = attempts.length;
-  const uniqueStudents = new Set(attempts.map((a) => a.user_id)).size;
+  
+  // حساب الطلاب الفريدين: المسجلين + الضيوف
+  const registeredStudents = new Set(
+    attempts.filter(a => a.user_id).map(a => a.user_id)
+  ).size;
+  
+  const guestNames = new Set(
+    attempts.filter(a => !a.user_id && a.student_name).map(a => a.student_name)
+  ).size;
+  
+  const uniqueStudents = registeredStudents + guestNames;
+  
   const scores = attempts
     .map((a) => a.score_percentage)
     .filter((s) => typeof s === "number");
@@ -134,21 +145,35 @@ function computeStudentStats(attempts, studentMap) {
   const map = new Map();
 
   attempts.forEach((a) => {
-    if (!a.user_id) return;
+    // تحديد معرّف فريد: إذا كان guest استخدم الاسم، وإلا استخدم user_id
+    const isGuest = !a.user_id;
+    const identifier = isGuest ? `guest_${a.student_name || 'غير معروف'}` : a.user_id;
+    
     const score = typeof a.score_percentage === "number" ? a.score_percentage : null;
-    if (!map.has(a.user_id)) {
-      const profile = studentMap.get(a.user_id);
-      map.set(a.user_id, {
-        id: a.user_id,
-        name: profile?.full_name || "—",
-        className: profile?.classes
+    
+    if (!map.has(identifier)) {
+      let name, className;
+      if (isGuest) {
+        name = a.student_name || "ضيف";
+        className = a.class || "—";
+      } else {
+        const profile = studentMap.get(a.user_id);
+        name = profile?.full_name || "—";
+        className = profile?.classes
           ? `${profile.classes.name}${profile.classes.grade ? ` (${profile.classes.grade})` : ""}`
-          : "—",
+          : "—";
+      }
+      
+      map.set(identifier, {
+        id: identifier,
+        name: isGuest ? `👤 ${name}` : name,
+        className,
         scores: [],
         attempts: 0,
+        isGuest,
       });
     }
-    const s = map.get(a.user_id);
+    const s = map.get(identifier);
     s.attempts++;
     if (score !== null) s.scores.push(score);
   });
@@ -318,11 +343,16 @@ function renderClassChart(attempts, studentMap) {
 
   const classMap = {};
   attempts.forEach((a) => {
-    if (!a.user_id) return;
-    const profile = studentMap.get(a.user_id);
-    const cls = profile?.classes
-      ? profile.classes.name
-      : "غير محدد";
+    let cls;
+    if (!a.user_id) {
+      // ضيف
+      cls = a.class || "غير محدد";
+    } else {
+      // مسجل
+      const profile = studentMap.get(a.user_id);
+      cls = profile?.classes ? profile.classes.name : "غير محدد";
+    }
+    
     if (typeof a.score_percentage !== "number") return;
     if (!classMap[cls]) classMap[cls] = [];
     classMap[cls].push(a.score_percentage);

@@ -1,6 +1,6 @@
 
 import { auth, onAuthStateChanged, supabase, pagePath, roleLanding, LOGIN_PAGE } from "./auth.js";
-import { initTheme, applyTheme } from "./theme.js";
+import { applyTheme } from "./theme.js";
 
 // Local Storage Helpers
 const DB_PREFIX = "fawzia_";
@@ -8,8 +8,7 @@ const getStored = (key) => JSON.parse(localStorage.getItem(DB_PREFIX + key) || "
 const setStored = (key, val) => localStorage.setItem(DB_PREFIX + key, JSON.stringify(val));
 
 
-        // Initialize theme early so UI renders with correct mode
-        initTheme();
+        // Theme will be initialized by individual pages
 
         const defaultConfig = {
             school_name: "مدرسة الطالب الذكي الخاصة بنزوى",

@@ -55,8 +55,8 @@ async function loadResults(uid) {
       <td class="px-3 py-2">${typeof a.score_percentage === "number" ? a.score_percentage + "%" : "-"}</td>
       <td class="px-3 py-2">${a.created_at ? new Date(a.created_at).toLocaleString("ar-EG") : "-"}</td>
       <td class="px-3 py-2">
-         <a href="result-view.html?attempt_id=${a.exam_id ? a.id : "#"}" class="btn-ghost px-3 py-1 text-xs rounded border border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-200">
-           تفاصل
+         <a href="result-view.html?attempt_id=${a.id}" class="btn-ghost px-3 py-1 text-xs rounded border border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-200">
+           تفاصيل
          </a>
       </td>
     `;
