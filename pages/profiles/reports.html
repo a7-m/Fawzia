@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تقارير الأداء | Fawzia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/style.css" />
+    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- jsPDF + html2canvas for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+      @media print {
+        .no-print { display: none !important; }
+        body { background: #fff !important; }
+        .report-card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+      }
+      .stat-card {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+        color: #fff;
+        border-radius: 1rem;
+        padding: 1.25rem 1.5rem;
+      }
+      .stat-card.secondary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      }
+      .stat-card.accent {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      }
+      .stat-card.success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      }
+      .chart-container { position: relative; min-height: 260px; }
+      .report-card {
+        background: #fff;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(15,23,42,.06);
+        padding: 1.5rem;
+      }
+      .dark-mode .report-card {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      .dark-mode .stat-card { color: #fff; }
+    </style>
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900 font-[Cairo]">
+    <nav class="main-nav" aria-label="شريط التنقل">
+      <div class="nav-brand">
+        <a class="nav-logo" href="../../index.html">
+          <span class="brand-mark" aria-hidden="true">﴾﴿</span>
+          <span class="brand-text">اختبارات تعليمية</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item"><a class="nav-link" href="../../index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="../about.html">عن المنصة</a></li>
+        <li class="nav-item"><a class="nav-link" id="profileLink" href="admin.html">لوحة التحكم</a></li>
+      </ul>
+      <div class="theme-toggle-container flex items-center gap-2">
+        <button id="themeToggle" class="theme-toggle-btn" title="تبديل الثيم">
+          <span class="theme-icon">🌓</span>
+        </button>
+        <button id="logoutBtn" class="btn btn-sm no-print">تسجيل الخروج</button>
+      </div>
+    </nav>
+
+    <div class="watermark">
+      © أحــمـد عـصــام ـــ اختبارات تعليمية . جميع الحقوق محفوظة 2026
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+
+      <!-- Header -->
+      <header class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-sm text-slate-500">لوحة المشرف</p>
+          <h1 class="text-2xl font-bold">📊 تقارير أداء الطلاب</h1>
+          <p class="text-sm text-slate-500" id="reportPeriodLabel">تقرير آخر 30 يوم</p>
+        </div>
+        <div class="flex flex-wrap gap-2 no-print">
+          <select id="periodSelect" class="border rounded-lg px-3 py-2 text-sm bg-white">
+            <option value="7">آخر 7 أيام</option>
+            <option value="30" selected>آخر 30 يوم</option>
+            <option value="90">آخر 90 يوم</option>
+            <option value="365">آخر سنة</option>
+          </select>
+          <button id="generateReportBtn" class="btn">
+            🔄 تحديث التقرير
+          </button>
+          <button id="printBtn" class="btn btn-ghost">
+            🖨️ طباعة
+          </button>
+          <button id="exportPdfBtn" class="btn btn-ghost">
+            📄 تصدير PDF
+          </button>
+          <a href="admin.html" class="btn btn-ghost">← العودة للتحكم</a>
+        </div>
+      </header>
+
+      <!-- Status -->
+      <div id="statusMessage" class="hidden rounded-xl border px-4 py-3 text-sm font-semibold"></div>
+
+      <!-- Loading -->
+      <div id="loadingSpinner" class="flex justify-center items-center py-16">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent"></div>
+        <span class="mr-3 text-slate-500">جارٍ تحميل التقرير…</span>
+      </div>
+
+      <!-- Report Content -->
+      <div id="reportContent" class="hidden space-y-8">
+
+        <!-- Stats Cards -->
+        <section id="statsSection" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="stat-card">
+            <p class="text-sm opacity-80">إجمالي المحاولات</p>
+            <p class="text-3xl font-bold mt-1" id="statTotalAttempts">0</p>
+          </div>
+          <div class="stat-card secondary">
+            <p class="text-sm opacity-80">الطلاب النشطون</p>
+            <p class="text-3xl font-bold mt-1" id="statActiveStudents">0</p>
+          </div>
+          <div class="stat-card accent">
+            <p class="text-sm opacity-80">متوسط الدرجات</p>
+            <p class="text-3xl font-bold mt-1" id="statAvgScore">0%</p>
+          </div>
+          <div class="stat-card success">
+            <p class="text-sm opacity-80">نسبة النجاح</p>
+            <p class="text-3xl font-bold mt-1" id="statPassRate">0%</p>
+          </div>
+        </section>
+
+        <!-- Charts Row 1 -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- Daily Attempts Chart -->
+          <div class="report-card">
+            <h2 class="text-base font-bold mb-4">📅 المحاولات اليومية</h2>
+            <div class="chart-container">
+              <canvas id="dailyAttemptsChart"></canvas>
+            </div>
+          </div>
+          <!-- Score Distribution -->
+          <div class="report-card">
+            <h2 class="text-base font-bold mb-4">🎯 توزيع الدرجات</h2>
+            <div class="chart-container">
+              <canvas id="scoreDistChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- Performance by Subject -->
+          <div class="report-card">
+            <h2 class="text-base font-bold mb-4">📚 متوسط الدرجات حسب المادة</h2>
+            <div class="chart-container">
+              <canvas id="subjectChart"></canvas>
+            </div>
+          </div>
+          <!-- Performance by Class -->
+          <div class="report-card">
+            <h2 class="text-base font-bold mb-4">🏫 متوسط الدرجات حسب الصف</h2>
+            <div class="chart-container">
+              <canvas id="classChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Students Table -->
+        <div class="report-card">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold">🏆 أعلى 10 طلاب أداءً</h2>
+            <span class="text-xs text-slate-500">بناءً على متوسط الدرجات</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="bg-slate-50">
+                <tr class="text-right">
+                  <th class="px-3 py-2">#</th>
+                  <th class="px-3 py-2">اسم الطالب</th>
+                  <th class="px-3 py-2">الصف</th>
+                  <th class="px-3 py-2">عدد المحاولات</th>
+                  <th class="px-3 py-2">متوسط الدرجة</th>
+                  <th class="px-3 py-2">أعلى درجة</th>
+                  <th class="px-3 py-2">الأداء</th>
+                </tr>
+              </thead>
+              <tbody id="topStudentsTbody"></tbody>
+            </table>
+            <p id="topStudentsEmpty" class="hidden text-sm text-slate-500 mt-3 text-center py-4">لا توجد بيانات.</p>
+          </div>
+        </div>
+
+        <!-- Struggling Students Table -->
+        <div class="report-card">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold">⚠️ طلاب يحتاجون متابعة</h2>
+            <span class="text-xs text-slate-500">متوسط الدرجة أقل من 50%</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="bg-slate-50">
+                <tr class="text-right">
+                  <th class="px-3 py-2">اسم الطالب</th>
+                  <th class="px-3 py-2">الصف</th>
+                  <th class="px-3 py-2">عدد المحاولات</th>
+                  <th class="px-3 py-2">متوسط الدرجة</th>
+                  <th class="px-3 py-2">الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="strugglingTbody"></tbody>
+            </table>
+            <p id="strugglingEmpty" class="hidden text-sm text-slate-500 mt-3 text-center py-4">لا يوجد طلاب يحتاجون متابعة 👍</p>
+          </div>
+        </div>
+
+        <!-- All Students Summary -->
+        <div class="report-card">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold">📋 ملخص أداء جميع الطلاب</h2>
+            <div class="flex gap-2 no-print">
+              <input id="studentSearch" type="text" class="border rounded-lg px-3 py-1.5 text-sm" placeholder="بحث باسم الطالب…" />
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="bg-slate-50">
+                <tr class="text-right">
+                  <th class="px-3 py-2">الطالب</th>
+                  <th class="px-3 py-2">الصف</th>
+                  <th class="px-3 py-2">المحاولات</th>
+                  <th class="px-3 py-2">المتوسط</th>
+                  <th class="px-3 py-2">الأعلى</th>
+                  <th class="px-3 py-2">الأدنى</th>
+                  <th class="px-3 py-2">الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="allStudentsTbody"></tbody>
+            </table>
+            <p id="allStudentsEmpty" class="hidden text-sm text-slate-500 mt-3 text-center py-4">لا توجد بيانات طلاب.</p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-xs text-slate-400 py-4">
+          تم إنشاء هذا التقرير بواسطة نظام اختبارات فوزية التعليمية •
+          <span id="reportGeneratedAt"></span>
+        </div>
+
+      </div><!-- /reportContent -->
+    </main>
+
+    <script type="module" src="../../js/reports.js"></script>
+    <script type="module" src="../../js/script.js"></script>
+  </body>
+</html>
+
