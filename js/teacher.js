@@ -553,7 +553,8 @@ function checkQuestionHasCorrect(q) {
     return Array.isArray(q.correct) && q.correct.length > 0;
   }
   if (q.type === "essay") {
-    return !!(q.modelAnswer && q.modelAnswer.trim());
+    // الإجابات المقالية لا تتطلب إجابة نموذجية - أي إجابة غير فارغة من الطالب تُقبل
+    return true; // تُعتبر السؤال المقالي "محدد" بدون الحاجة لإجابة نموذجية
   }
   if (q.type === "ordering") {
     return Array.isArray(q.correctOrder) && q.correctOrder.length > 0;
@@ -640,8 +641,9 @@ function validateQuestions(showError = false) {
         return { valid: false, message: `حدد إجابة صحيحة واحدة على الأقل للسؤال ${i + 1}.` };
       }
     } else if (q.type === "essay") {
+      // الإجابة النموذجية للأسئلة المقالية اختيارية (تحذير فقط)
       if (!q.modelAnswer || !q.modelAnswer.trim()) {
-        return { valid: false, message: `أدخل إجابة نموذجية للسؤال ${i + 1}.` };
+        console.warn(`تحذير: السؤال ${i + 1} (مقالي) بدون إجابة نموذجية. سيتم قبول أي إجابة غير فارغة من الطالب.`);
       }
     } else if (q.type === "ordering") {
       if (!Array.isArray(q.items) || q.items.length < 2) {

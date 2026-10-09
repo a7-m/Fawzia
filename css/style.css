@@ -111,6 +111,13 @@ a {
   text-decoration: none;
 }
 
+/* Responsive Images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 .container {
   max-width: 1200px; /* Wider container */
   margin: 0 auto;
@@ -221,8 +228,42 @@ a {
 
 .nav-toggle {
   display: none;
-  /* ... toggle styles if needed for mobile ... */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
   color: var(--text);
+  padding: 8px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.nav-toggle:hover {
+  background: rgba(var(--primary-rgb), 0.1);
+}
+
+.nav-toggle-bar {
+  display: block;
+  width: 28px;
+  height: 3px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
+  transform: rotate(45deg) translate(10px, 10px);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
+  transform: rotate(-45deg) translate(9px, -9px);
 }
 
 .nav-links {
@@ -397,6 +438,8 @@ html.dark ::placeholder {
   height: 180px;
   object-fit: contain;
   filter: drop-shadow(0 16px 30px rgba(var(--shadow-color), 0.18));
+  max-width: 100%;
+  height: auto;
 }
 
 .page-header h1 {
